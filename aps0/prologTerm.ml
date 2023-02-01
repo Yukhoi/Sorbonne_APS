@@ -52,7 +52,7 @@ let print_prog p =
   print_cmds p;
   Printf.printf("])")
 ;;
-	
+
 let fname = Sys.argv.(1) in
 let ic = open_in fname in
   try
