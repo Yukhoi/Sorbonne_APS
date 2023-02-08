@@ -8,27 +8,122 @@
 (* ==  Génération de termes Prolog                                         == *)
 (* ========================================================================== *)
 open Ast
+
+let print_type t = 
+  match t with
+    ASTBool -> Printf.printf "bool(%s)" t
+  | ASTInt -> Printf.printf"num(%d)" t
+
+let print_arg a = 
+  match a with
+    ASTArg1(str , t) ->
+      Printf.printf"id(%s)" str ;
+      Printf.printf":" ;
+      print_type t;
+
+let rec print_args ags = 
+  match ags with 
+    | ASTArg2(a) -> print_arg a
+    | ASTArgs(a,args) -> (
+      print_arg a;
+      print_char ',';
+      print_args args;
+      )
+
   
 let rec print_expr e =
   match e with
       ASTNum n -> Printf.printf"num(%d)" n
     | ASTId x -> Printf.printf"id(%s)" x
     | ASTApp(e, es) -> (
-	Printf.printf"app(";
-	print_expr e;
-	Printf.printf",[";
-	print_exprs es;
-	Printf.printf"])"
+        Printf.printf"app(";
+        print_expr e;
+        Printf.printf",[";
+        print_exprs es;
+        Printf.printf"])"
       )
+    | ASTIf (e1 ,e2, e3) ->(
+        Printf.printf "if";
+        Printf.printf "(";
+        print_expr e1;
+        Printf.printf ",";
+        print_expr e2;
+        Printf.printf ",";
+        print_expr e3;
+        Printf.printf ")";
+    )
+    | ASTAnd (oplog ,e1,e2)->(
+        Printf.printf "oplog(%s)" oplog;
+        Printf.printf "(";
+        print_expr e1;
+        Printf.printf ",";
+        print_expr e2;
+        Printf.printf ")";
+    )
+    | ASTOr (oplog ,e1,e2)->(
+      Printf.printf "oplog(%s)" oplog;
+      Printf.printf "(";
+      print_expr e1;
+      Printf.printf ",";
+      print_expr e2;
+      Printf.printf ")";
+    )
+    | ASTExprArgs(a ,e) ->(
+        Printf.printf "(";
+        Printf.printf"[";
+        print_args a;
+        Printf.printf"]";
+        Printf.printf ",";
+         print_expr e;
+        Printf.printf ")"
+    )
+
 and print_exprs es =
   match es with
       [] -> ()
-    | [e] -> print_expr e
-    | e::es -> (
-	print_expr e;
-	print_char ',';
-	print_exprs es
+    | ASTExpr(e) -> print_expr e
+    | ASTExprs(e ,es) -> (
+	    print_expr e;
+	    print_char ',';
+	    print_exprs es
       )
+
+
+let print_def d = 
+  match d with
+      ASTConst (str ,t, e) ->(
+        Printf.printf"Const";
+        Printf.printf"(";
+        Printf.printf"%s"  str;
+        Printf.printf")";
+        Printf.printf",";
+        Printf.printf"(";
+        print_type t;
+        Printf.printf")";
+        Printf.printf",";
+        Printf.printf"(";
+        print_expr t;
+        Printf.printf")";
+        )
+    | ASTFunc (s ,t ,a ,e)->(
+        Printf.printf"Fun";
+        Printf.printf"(";
+        Printf.printf"%s"  str;
+        Printf.printf")";
+        Printf.printf",";
+        Printf.printf"(";
+        print_type t;
+        Printf.printf")";
+        Printf.printf",";
+        Printf.printf"[";
+        print_args a;
+        Printf.printf"]";
+        Printf.printf",";
+        Printf.printf"(";
+        print_expr t;
+        Printf.printf")";
+    )
+
 
 let print_stat s =
   match s with
@@ -38,14 +133,26 @@ let print_stat s =
 	Printf.printf(")")
       )
 
-let print_cmd c =
-  match c with
-      ASTStat s -> print_stat s
+     
 	
 let rec print_cmds cs =
   match cs with
-      c::[] -> print_cmd c
-    | _ -> failwith "not yet implemented"
+    ASTStat s -> (
+      Printf.printf"stat";
+      Printf.printf"(";
+      print_stat s;
+      Printf.printf")";
+    )
+    | ASTDef (d,c) ->(
+      Printf.printf"def";
+      Printf.printf"(";
+      print_def d;
+      Printf.printf")";
+      Printf.printf";";
+      Printf.printf"(";
+      print_cmds c;
+      Printf.printf")";
+)
 	
 let print_prog p =
   Printf.printf("prog([");

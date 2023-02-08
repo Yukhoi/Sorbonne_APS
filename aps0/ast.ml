@@ -24,8 +24,8 @@ type oplog = And|Or
 
 
 type typ =
-  Bool
-| Int 
+  ASTBool
+| ASTInt 
 | ASTTypeFunc of typs * typ
 
 
