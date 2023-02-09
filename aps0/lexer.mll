@@ -41,7 +41,7 @@ rule token = parse
     (*Identificateurs*)
   | ['a'-'z']['a'-'z''A'-'Z''0'-'9']* as lxm { IDENT(lxm) }
     (*symboles primitifs*)
-  | "true"           { TURE }
+  | "true"           { TRUE }
   | "false"           { FALSE }
   | "eq"              { EQUAL }
   | "add"             { ADD }

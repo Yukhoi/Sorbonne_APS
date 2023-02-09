@@ -8,18 +8,36 @@
 (* ==  Génération de termes Prolog                                         == *)
 (* ========================================================================== *)
 open Ast
-
-let print_type t = 
+(* 
+let rec print_type t = 
   match t with
-    ASTBool -> Printf.printf "bool(%s)" t
-  | ASTInt -> Printf.printf"num(%d)" t
+    ASTBoolInt(t) -> Printf.printf "type(%s)" t
+  | ASTTypeFunc(ts ,t ) ->(
+      Printf.printf "(";
+      Printf.printf "[";
+      print_types typs;
+      Printf.printf "]";
+      Printf.printf "->";
+      print_type typ;
+      Printf.printf ")"
+    )
+  and print_types ts = 
+  match ts with 
+   ASTASTType(t) ->
+      print_type t;
+  |ASTTypes(t,ts) ->
+      print_type t;
+      Printf.printf ",";
+      print_types ts
+
+
 
 let print_arg a = 
   match a with
     ASTArg1(str , t) ->
       Printf.printf"id(%s)" str ;
       Printf.printf":" ;
-      print_type t;
+      print_type t
 
 let rec print_args ags = 
   match ags with 
@@ -27,11 +45,11 @@ let rec print_args ags =
     | ASTArgs(a,args) -> (
       print_arg a;
       print_char ',';
-      print_args args;
+      print_args args
       )
 
-  
-let rec print_expr e =
+ 
+let rec print_expr e =()
   match e with
       ASTNum n -> Printf.printf"num(%d)" n
     | ASTId x -> Printf.printf"id(%s)" x
@@ -87,6 +105,7 @@ and print_exprs es =
 	    print_char ',';
 	    print_exprs es
       )
+      
 
 
 let print_def d = 
@@ -160,6 +179,8 @@ let print_prog p =
   Printf.printf("])")
 ;;
 
+
+
 let fname = Sys.argv.(1) in
 let ic = open_in fname in
   try
@@ -169,4 +190,4 @@ let ic = open_in fname in
       print_string ".\n"
   with Lexer.Eof ->
     exit 0
-      
+ *)     

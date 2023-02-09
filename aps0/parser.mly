@@ -23,7 +23,10 @@ open Ast
 %token INT BOOL
 %token OR AND NOT
 %token CONST
-%token ECHO
+%token ECHO IF FUN FUNC REC
+%token TRUE FALSE
+%token EQUAL
+%token LESS
 
 
 
@@ -32,8 +35,8 @@ open Ast
 %type <Ast.cmds> cmds
 %type <Ast.cmds> prog
 %type <Ast.def> def
-%type <Ast.typ> type
-%type <Ast.typs> types
+%type <Ast.typ> typ
+%type <Ast.typs> typs
 
 
 
@@ -54,23 +57,23 @@ stat:
 ;
 
 def:
-  CONST IDENT type  expr   {ASTConst($2, $3, $4)}
-| FUNC IDENT type LBRA args RBRA expr {ASTFunc($2, $3 ,$5, $7)}
-| FUN REC IDENT type LBRA args RBRA expr {ASTFuncRec($3, $4 $6, $8)}
+  CONST IDENT typ  expr   {ASTConst($2, $3, $4)}
+| FUNC IDENT typ LBRA args RBRA expr {ASTFunc($2, $3 ,$5, $7)}
+| FUN REC IDENT typ LBRA args RBRA expr {ASTFuncRec($3, $4 $6, $8)}
 ;
 
 typ:
   BOOL                  {BOOL}
 | INT                   {INT}
-| types ARROW type      {ASTTypeFunc($1, $3)}
+| typs ARROW typ      {ASTTypeFunc($1, $3)}
 ;
 
 typs:
-  type                  {ASTType($1)}
-| type STAR types       {ASTTypes($1,$3)}
+  typ                  {ASTType($1)}
+| typ STAR typs       {ASTTypes($1,$3)}
 ;
 arg:
- IDENT COLON types      {ASTArg1($1,$3)}
+ IDENT COLON typs      {ASTArg1($1,$3)}
 ;
 
 args:

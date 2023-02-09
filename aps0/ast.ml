@@ -19,13 +19,12 @@ type op =
 
 type oplog = And|Or
 
-
+type typeBoolInt = Bool|Int
 
 
 
 type typ =
-  ASTBool
-| ASTInt 
+  ASTBoolInt of typeBoolInt
 | ASTTypeFunc of typs * typ
 
 
