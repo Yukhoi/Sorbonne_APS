@@ -6,7 +6,7 @@ get_typeArgs([(_,T)|ARGS],[T|RES]) :-
 /*programme*/
 typeProg(G, prog(X), void) :- typeCmds(G, X, void).
 
-/*command
+/*command*/
 /*stat*/
 typeCmds(G, stat(X), void) :- typeStat(G, X, void).
 /*def*/
@@ -69,6 +69,3 @@ typeExpr(G, func(ARGS, E), typeFunc(TARG,T)) :-
     get_typeArgs(ARG,TARG),
     typeExpr(G1, E ,T).
 
-/*ehos*/
-typeEchos(G, echo(E), void) :-
-    typeExpr(G, E, int).

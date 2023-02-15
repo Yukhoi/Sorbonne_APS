@@ -9,6 +9,8 @@
 (* ========================================================================== *)
 open Ast
 
+let iden = ref []
+
 let rec print_type t = 
   match t with
     Type(t) -> 
@@ -55,8 +57,9 @@ let rec print_args ags =
  
 let rec print_expr e = 
   match e with
-    | ASTNum n -> Printf.printf"num(%d)" n
-    | ASTId x -> Printf.printf"id(%s)" x
+    | ASTNum n -> Printf.printf"%d" n
+    | ASTId x -> Printf.printf"id(%s)" x;
+        iden := List.cons ("("^x^",int)") !iden;
     | ASTApp(e, es) -> (
         Printf.printf"app(";
         print_expr e;
@@ -193,16 +196,25 @@ let rec print_cmds cs =
       print_cmds c;
       Printf.printf")";
 )
-	
+
+let rec print_env e =
+  match e with
+  [] -> ()
+  |x::l -> Printf.printf"%s" x;
+              Printf.printf ",";
+              print_env l;;
+
 let print_prog p =
-  Printf.printf("prog([");
+  Printf.printf("typeProg([");
+  print_env !iden;
+  Printf.printf("],prog(");
   print_cmds p;
-  Printf.printf("])")
+  Printf.printf("), void)")
 ;;
 
 
 
-let fname = Sys.argv.(1) in
+(*let fname = Sys.argv.(1) in
 let ic = open_in fname in
   try
     let lexbuf = Lexing.from_channel ic in
@@ -210,5 +222,4 @@ let ic = open_in fname in
       print_prog p;
       print_string ".\n"
   with Lexer.Eof ->
-    exit 0
-    
+    exit 0;;*)
