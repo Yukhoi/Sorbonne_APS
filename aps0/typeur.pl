@@ -13,11 +13,11 @@ typeCmds(G, stat(X), void) :- typeStat(G, X, void).
 typeCmds(G, [def(X)| Y], void) :- 
     typeDef(G, X, CB),
     typeCmds(CB, Y, void).
-;
+
 
 /*def*/
 /*const*/
-typeDef(G, const(X, T, E), [(X,T)|G]) :- typeExpr(G, E, T)
+typeDef(G, const(X, T, E), [(X,T)|G]) :- typeExpr(G, E, T).
 /*func*/
 typeDef(G, fun(X, T, ARG, E), [(X,typeFunc(TARG, T))|G]) :- 
     append(ARG, G, G1),
@@ -30,16 +30,16 @@ typeDef(G, funRec(X, T, ARG, E), [(X,typeFunc(TARG, T))|G]) :-
     typeExpr([(X,typeFunc(TARG, T))|G1], E ,T).
 
 /*stat*/
-typeStat(G,echo(E),void) :- typeExpr(G,E,int)
+typeStat(G,echo(E),void) :- typeExpr(G,E,int).
 
 /*expr*/
 typeExpr(_,true , bool).
 typeExpr(_,false , bool).
 /*num*/
-typeExpr(G ,N, int) :- integer(N)
+typeExpr(G ,N, int) :- integer(N).
 /*id*/
 typeExpr([(X,T)|G], id(X), T).
-typeExpr([_|G],id(X),T) :- typeExpr(G,id(X),T)
+typeExpr([_|G],id(X),T) :- typeExpr(G,id(X),T).
 /*if*/
 typeExpr(G,if(CON, E1, E2), T) :- 
     typeExpr(G, CON, bool),
@@ -54,8 +54,15 @@ typeExpr(G, and(E1,E2),bool) :-
     typeExpr(G , E1, bool ),
     typeExpr(G , E2, bool ).
 /*app*/
-typeExpr(G, E, T) :-
-    typeExpr
+typeExpr(G, (E, EXPRS), T) :-
+    typeExpr(G, E, (ARGS_T, T)),
+    typeExprList(G, EXPRS, ARGS_T).
+
+typeExprList(G, [], []).
+typeExprList(G, [E|ES], [T|TS]):-
+    typeExprList(G, ES, TS),
+    typeExprList(G, E, T).
+
 /*abstraction*/
 typeExpr(G, func(ARGS, E), typeFunc(TARG,T)) :-
     append(ARG, G, G1),
@@ -64,4 +71,4 @@ typeExpr(G, func(ARGS, E), typeFunc(TARG,T)) :-
 
 /*ehos*/
 typeEchos(G, echo(E), void) :-
-    typeExpr(G, E, int)
+    typeExpr(G, E, int).
