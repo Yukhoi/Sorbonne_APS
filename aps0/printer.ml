@@ -200,21 +200,23 @@ let rec print_cmds cs =
 let rec print_env e =
   match e with
   [] -> ()
+  |[x] ->  Printf.printf"%s" x
   |x::l -> Printf.printf"%s" x;
               Printf.printf ",";
               print_env l;;
 
 let print_prog p =
   Printf.printf("typeProg([");
-  print_env !iden;
   Printf.printf("],prog(");
   print_cmds p;
-  Printf.printf("), void)")
+  Printf.printf("), void)");
+  print_env !iden;
+
 ;;
 
 
-
-(*let fname = Sys.argv.(1) in
+(*
+let fname = Sys.argv.(1) in
 let ic = open_in fname in
   try
     let lexbuf = Lexing.from_channel ic in

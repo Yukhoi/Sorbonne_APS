@@ -54,7 +54,7 @@ typeExpr(G, and(E1,E2),bool) :-
     typeExpr(G , E1, bool ),
     typeExpr(G , E2, bool ).
 /*app*/
-typeExpr(G, (E, EXPRS), T) :-
+typeExpr(G, app(E, EXPRS), T) :-
     typeExpr(G, E, (ARGS_T, T)),
     typeExprList(G, EXPRS, ARGS_T).
 
