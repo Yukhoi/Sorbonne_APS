@@ -58,6 +58,7 @@ let rec print_args ags =
 let rec print_expr e = 
   match e with
     | ASTNum n -> Printf.printf"%d" n
+    | ASTBool n -> if n then Printf.printf "true" else Printf.printf "false"
     | ASTId x -> Printf.printf"id(%s)" x;
         iden := List.cons ("("^x^",int)") !iden;
     | ASTApp(e, es) -> (
@@ -77,6 +78,11 @@ let rec print_expr e =
         print_expr e3;
         Printf.printf ")";
     )
+    | ASTNot(_,e1) ->(
+          Printf.printf "not(";
+          print_expr e1;
+          Printf.printf ")";
+    )
     | ASTAnd (_,e1,e2)->(
           Printf.printf "oplog(and)";
           Printf.printf "(";
@@ -92,6 +98,14 @@ let rec print_expr e =
         Printf.printf ",";
         print_expr e2;
         Printf.printf ")";
+    )
+    | ASTOp(op, e1, e2) ->(
+      Printf.printf "%s" (op);
+      Printf.printf "(";
+      print_expr e1;
+      Printf.printf ",";
+      print_expr e2;
+      Printf.printf ")";
     )
     | ASTExprArgs(a ,e) ->(
         Printf.printf "(";

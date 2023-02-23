@@ -9,7 +9,6 @@
 (* ========================================================================== *)
 
 type op = 
-  Not
 | Eq 
 | Lt 
 | Add 
@@ -17,7 +16,11 @@ type op =
 | Mul 
 | Div
 
-type oplog = And|Or
+type opAnd = And
+
+type opOr = Or
+
+type oplogU = Not
 
 type typeBoolInt = Bool|Int
 
@@ -39,11 +42,15 @@ type args =
 type expr =
     ASTNum of int
   | ASTId of string
+  | ASTBool of bool
   | ASTApp of expr * exprs
   | ASTIf of expr * expr * expr
-  | ASTAnd of oplog * expr * expr
-  | ASTOr of oplog * expr * expr 
+  | ASTAnd of opAnd * expr * expr
+  | ASTOr of opOr * expr * expr 
+  | ASTNot of oplogU * expr
+  | ASTOp of op * expr * expr
   | ASTExprArgs of args * expr
+
 
 and exprs = 
     ASTExpr of expr

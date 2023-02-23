@@ -2,6 +2,10 @@
 module Ast = Dune__exe__Ast
 
 
+(** @canonical Dune__exe.Evaluateur *)
+module Evaluateur = Dune__exe__Evaluateur
+
+
 (** @canonical Dune__exe.Lexer *)
 module Lexer = Dune__exe__Lexer
 
