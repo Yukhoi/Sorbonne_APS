@@ -61,13 +61,14 @@ let rec print_expr e =
     | ASTBool n -> if n then Printf.printf "true" else Printf.printf "false"
     | ASTId x -> Printf.printf"id(%s)" x;
         iden := List.cons ("("^x^",int)") !iden;
-    | ASTApp(e, es) -> (
-        Printf.printf"app(";
-        print_expr e;
-        Printf.printf",[";
-        print_exprs es;
-        Printf.printf"])"
-      )
+    | ASTOp(op, e1, e2) ->(
+      Printf.printf "%s" (string_of_op op);
+      Printf.printf "(";
+      print_expr e1;
+      Printf.printf ",";
+      print_expr e2;
+      Printf.printf ")";
+    )
     | ASTIf (e1 ,e2, e3) ->(
         Printf.printf "if";
         Printf.printf "(";
@@ -84,7 +85,7 @@ let rec print_expr e =
           Printf.printf ")";
     )
     | ASTAnd (_,e1,e2)->(
-          Printf.printf "oplog(and)";
+          Printf.printf "and";
           Printf.printf "(";
           print_expr e1;
           Printf.printf ",";
@@ -92,23 +93,22 @@ let rec print_expr e =
           Printf.printf ")";
     )
     | ASTOr (_,e1,e2)->(
-        Printf.printf "oplog(or)";
+        Printf.printf "or";
         Printf.printf "(";
         print_expr e1;
         Printf.printf ",";
         print_expr e2;
         Printf.printf ")";
     )
-    | ASTOp(op, e1, e2) ->(
-      Printf.printf "%s" (op);
-      Printf.printf "(";
-      print_expr e1;
-      Printf.printf ",";
-      print_expr e2;
-      Printf.printf ")";
-    )
+    | ASTApp(e, es) -> (
+        Printf.printf"app(";
+        print_expr e;
+        Printf.printf",[";
+        print_exprs es;
+        Printf.printf"])"
+      )     
     | ASTExprArgs(a ,e) ->(
-        Printf.printf "(";
+        Printf.printf "abs(";
         Printf.printf"[";
         print_args a;
         Printf.printf"]";
@@ -131,7 +131,7 @@ and print_exprs es =
 let print_def d = 
   match d with
       ASTConst (str ,t, e) ->(
-        Printf.printf"Const";
+        Printf.printf"const";
         Printf.printf"(";
         Printf.printf"%s"  str;
         Printf.printf")";
@@ -145,7 +145,7 @@ let print_def d =
         Printf.printf")";
         )
     | ASTFunc (s ,t ,a ,e)->(
-        Printf.printf"Fun";
+        Printf.printf"fun";
         Printf.printf"(";
         Printf.printf"%s"  s;
         Printf.printf")";
@@ -163,7 +163,7 @@ let print_def d =
         Printf.printf")";
       )
       | ASTFuncRec (s ,t ,a ,e)->(
-        Printf.printf"Fun";
+        Printf.printf"funRec";
         Printf.printf"(";
         Printf.printf"%s"  s;
         Printf.printf")";
@@ -220,11 +220,11 @@ let rec print_env e =
               print_env l;;
 
 let print_prog p =
-  Printf.printf("typeProg([");
-  Printf.printf("],prog(");
+  Printf.printf("typeProg(E");
+  Printf.printf(",prog(");
   print_cmds p;
   Printf.printf("), void)");
-  print_env !iden;
+  (*print_env !iden;*)
 
 ;;
 

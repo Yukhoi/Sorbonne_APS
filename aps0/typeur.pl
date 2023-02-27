@@ -2,6 +2,14 @@ get_typeArgs([],[]).
 get_typeArgs([(_,T)|ARGS],[T|RES]) :-
 	get_typeArgs(ARGS,RES).
 
+assoc(X, [(X,V)|_], V).
+assoc(X, [_|XS], V) :- assoc(X, XS, V).
+		
+checkArgs(_,[],[]).
+checkArgs(G,[ARG|ARGS],[ARGTYPE|ARGSTYPE]) :-
+	typeExpr(G,ARG,ARGTYPE),
+	checkArgs(G,ARGS,ARGSTYPE).
+
 
 /*programme*/
 typeProg(G, prog(X), void) :- typeCmds(G, X, void).
@@ -17,7 +25,9 @@ typeCmds(G, [def(X)| Y], void) :-
 
 /*def*/
 /*const*/
-typeDef(G, const(X, T, E), [(X,T)|G]) :- typeExpr(G, E, T).
+typeDef(G, const(X, T, E), [(X,T)|G]) :- 
+    append((X,T),G,G1)
+    typeExpr(G1, E, T).
 /*func*/
 typeDef(G, fun(X, T, ARG, E), [(X,(TARG, T))|G]) :- 
     append(ARG, G, G1),
@@ -54,18 +64,33 @@ typeExpr(G, and(E1,E2),bool) :-
     typeExpr(G , E1, bool ),
     typeExpr(G , E2, bool ).
 /*app*/
-typeExpr(G, app(E, EXPRS), T) :-
+/*typeExpr(G, app(E, EXPRS), T) :-
     typeExpr(G, E, (ARGS_T, T)),
     typeExprList(G, EXPRS, ARGS_T).
 
 typeExprList(G, [], []).
 typeExprList(G, [E|ES], [T|TS]):-
     typeExprList(G, ES, TS),
-    typeExprList(G, E, T).
+    typeExprList(G, E, T).*/
+
+typeExpr(G,app(id(F),ARGS),TF) :-
+	assoc(F,G,(ARGSTYPE,TF)),
+	checkArgs(G,ARGS,ARGSTYPE).
+		
+typeExpr(G,app(func(ARGSTYPE,BODY),ARGS),TF) :-
+	get_typeArgs(ARGSTYPE,RES),
+	checkArgs(G,ARGS,RES),
+	append(ARGSTYPE,G,CB),
+	typeExpr(CB,BODY,TF).
+	
+typeExpr(G,app(app(X,Y),ARGS),TR) :-
+	get_type(ARGS,LT),
+	typeExpr(G,app(X,Y),(LT,TR)).
+
 
 /*abstraction*/
-typeExpr(G, func(ARGS, E), typeFunc(TARG,T)) :-
-    append(ARG, G, G1),
-    get_typeArgs(ARG,TARG),
+typeExpr(G, abs(ARGS, E), (TARG,T)) :-
+    append(ARGS, G, G1),
+    get_typeArgs(ARGS,TARG),
     typeExpr(G1, E ,T).
 

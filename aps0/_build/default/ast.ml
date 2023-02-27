@@ -72,3 +72,11 @@ type prog =
   ASTProg of cmds
 
 	
+  let string_of_op op = 
+    match op with
+      Add -> "add"
+    | Mul -> "mul"
+    | Sub -> "sub"
+    | Div -> "div"
+    | Eq -> "eq"
+    | Lt -> "lt"
