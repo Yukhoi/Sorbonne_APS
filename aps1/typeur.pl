@@ -1,3 +1,4 @@
+/*fonctions auxillieres*/
 get_typeArgs([],[]).
 get_typeArgs([(_,T)|ARGS],[T|RES]) :-
 	get_typeArgs(ARGS,RES).
@@ -10,9 +11,15 @@ checkArgs(G,[ARG|ARGS],[ARGTYPE|ARGSTYPE]) :-
 	typeExpr(G,ARG,ARGTYPE),
 	checkArgs(G,ARGS,ARGSTYPE).
 
+inEnv([(X,T)|G], X, T).
+inEnv([_|G], X, T) :- inEnv(G, X, T).
+
 
 /*programme*/
 typeProg(G, prog(X), void) :- typeCmds(G, X, void).
+
+/*block*/
+typeBlock(G, block(X), void) :- typeCmds(G, X, void).
 
 /*command*/
 /*stat*/
@@ -28,6 +35,8 @@ typeCmds(G, [def(X)| Y], void) :-
 typeDef(G, const(X, T, E), [(X,T)|G]) :- 
     append((X,T),G,G1),
     typeExpr(G1, E, T).
+/*var*/
+typeVar(G, var(X, T), [(X,T)|G]).     
 /*func*/
 typeDef(G, fun(X, T, ARG, E), [(X,(TARG, T))|G]) :- 
     append(ARG, G, G1),
@@ -38,9 +47,34 @@ typeDef(G, funRec(X, T, ARG, E), [(X,(TARG, T))|G]) :-
     get_typeArgs(ARG,TARG),
     append(ARG, G, G1),
     typeExpr([(X,typeFunc(TARG, T))|G1], E ,T).
+/*proc*/
+typeDef(G, proc(X, ARGS, B), [(X,(TARG, void))|G]) :-
+    get_typeArgs(ARG,TARG),
+    append(ARG, G, G1),
+    typeBlock(G1, B, void).
+/*proc rec*/
+typeDef(G, proc(X, ARGS, B), [(X,(TARG, void))|G]) :-
+    get_typeArgs(ARG,TARG),
+    append(ARG, G, G1),
+    typeBlock([(X,typeProc(TARG, T))|G1], B, void).
+
 
 /*stat*/
+/*echo*/
 typeStat(G,echo(E),void) :- typeExpr(G,E,int).
+/*set*/
+typeStat(G,set(E, T),void) :- 
+    inEnv(G, E, T),
+    typeExpr(G, E, T).
+/*IF*/
+typeStat(G,iF(CON, BK1, BK2), void) :- 
+    typeExpr(G, CON, bool),
+    typeBlock(G, BK1, void),
+    typeBlock(G, BK2, void).
+/*while*/
+typeStat(G, wHile(CON, BK1), void) :-
+    typeExpr(G, CON, bool),
+    typeBlock(G, BK1, void).
 
 /*expr*/
 typeExpr(_,true , bool).
@@ -48,8 +82,7 @@ typeExpr(_,false , bool).
 /*num*/
 typeExpr(G ,N, int) :- integer(N).
 /*id*/
-typeExpr([(X,T)|G], id(X), T).
-typeExpr([_|G],id(X),T) :- typeExpr(G,id(X),T).
+typeExpr(G, id(X), T) :- inEnv(G, X, T)
 /*if*/
 typeExpr(G,if(CON, E1, E2), T) :- 
     typeExpr(G, CON, bool),
@@ -72,7 +105,6 @@ typeExprList(G, [], []).
 typeExprList(G, [E|ES], [T|TS]):-
     typeExprList(G, ES, TS),
     typeExprList(G, E, T).*/
-
 typeExpr(G,app(id(F),ARGS),TF) :-
 	assoc(F,G,(ARGSTYPE,TF)),
 	checkArgs(G,ARGS,ARGSTYPE).
