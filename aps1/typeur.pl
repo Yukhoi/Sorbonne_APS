@@ -75,6 +75,13 @@ typeStat(G,iF(CON, BK1, BK2), void) :-
 typeStat(G, wHile(CON, BK1), void) :-
     typeExpr(G, CON, bool),
     typeBlock(G, BK1, void).
+/*call*/
+typeStat(G, call(X, ARGS), void) :-
+    inEnv(X, (TARGS,void)),
+    get_typeArgs(ARGS,RES),
+    checkArgs(G, ARGS, RES).
+
+
 
 /*expr*/
 typeExpr(_,true , bool).
@@ -110,7 +117,7 @@ typeExpr(G,app(id(F),ARGS),TF) :-
 	checkArgs(G,ARGS,ARGSTYPE).
 		
 typeExpr(G,app(func(ARGSTYPE,BODY),ARGS),TF) :-
-	get_typeArgs(ARGSTYPE,RES),
+	get_typeArgs(ARGSTYPE,RES),  
 	checkArgs(G,ARGS,RES),
 	append(ARGSTYPE,G,CB),
 	typeExpr(CB,BODY,TF).
