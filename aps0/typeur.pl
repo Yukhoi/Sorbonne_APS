@@ -77,7 +77,7 @@ typeExpr(G,app(id(F),ARGS),TF) :-
 	assoc(F,G,(ARGSTYPE,TF)),
 	checkArgs(G,ARGS,ARGSTYPE).
 		
-typeExpr(G,app(func(ARGSTYPE,BODY),ARGS),TF) :-
+typeExpr(G,app(fun(ARGSTYPE,BODY),ARGS),TF) :-
 	get_typeArgs(ARGSTYPE,RES),
 	checkArgs(G,ARGS,RES),
 	append(ARGSTYPE,G,CB),

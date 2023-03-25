@@ -66,18 +66,18 @@ def:
 ;
 
 typeBoolInt:
-  BOOL        {Int}          
-| NUM         {Bool}          
+  BOOL        {Bool}          
+| NUM         {Int}          
 ;
 
 typ:
-  typeBoolInt         { Type($1) }
-| typs ARROW typ      {ASTTypeFunc($1, $3)}
+  typeBoolInt         { TypeBoolInt($1) }
+| typs ARROW typ      { ASTTypeFunc($1, $3)}
 ;
 
 typs:
-  typ                  {ASTType($1)}
-| typ STAR typs       {ASTTypes($1,$3)}
+  typ                   { ASTType($1)}
+| typ STAR typs         { ASTTypes($1,$3)}
 ;
 arg:
  IDENT COLON typ      {ASTArg1($1,$3)}
@@ -90,13 +90,14 @@ args:
 
 
 expr:
-  NUM                   { ASTNum($1) }
-| IDENT                 { ASTId($1) }
-| LPAR expr exprs RPAR  { ASTApp($2, $3) }
+  NUM                         { ASTNum($1) }
+| IDENT                       { ASTId($1) }
+| LPAR expr exprs RPAR        { ASTApp($2, $3) }
 | LPAR IF expr expr expr RPAR { ASTIf($3, $4, $5) }
-| LPAR AND expr expr RPAR { ASTAnd(Ast.And, $3, $4) }
-| LPAR OR expr expr RPAR {ASTOr(Ast.Or,$3, $4)}
-| LBRA args RBRA expr     {ASTExprArgs($2,$4)}
+| LPAR AND expr expr RPAR     { ASTAnd(Ast.And, $3, $4) }
+| LPAR OR expr expr RPAR      {ASTOr(Ast.Or,$3, $4)}
+| LPAR NOT expr RPAR          {ASTNot(Ast.Not,$3)}
+| LBRA args RBRA expr         {ASTExprArgs($2,$4)}
 
 ;
 

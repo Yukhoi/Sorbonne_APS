@@ -17,3 +17,6 @@ module Parser = Dune__exe__Parser
 
 (** @canonical Dune__exe.Printer *)
 module Printer = Dune__exe__Printer
+
+(** @canonical Dune__exe.Printer2 *)
+module Printer2 = Dune__exe__Printer2

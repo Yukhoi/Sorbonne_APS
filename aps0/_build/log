@@ -3,7 +3,7 @@
 # Shared cache: disabled
 # Workspace root: /home/yukhoi/APS/projet/aps0
 # Auto-detected concurrency: 2
-$ /home/yukhoi/.opam/autobill/bin/ocamlc.opt -config > /tmp/dune_c5cc3b_output
+$ /home/yukhoi/.opam/autobill/bin/ocamlc.opt -config > /tmp/dune_bf440e_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -110,54 +110,3 @@ $ /home/yukhoi/.opam/autobill/bin/ocamlc.opt -config > /tmp/dune_c5cc3b_output
 #      ; windows_unicode = false
 #      }
 #  }
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/ocamldep.opt -modules -impl main.ml) > _build/default/.main.eobjs/dune__exe__Main.impl.d
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/ocamldep.opt -modules -impl printer.ml) > _build/default/.main.eobjs/dune__exe__Printer.impl.d
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/ocamllex -q -o lexer.ml lexer.mll)
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/menhir parser.mly --base parser --infer-write-query parser__mock.ml.mock)
-> File "parser.mly", line 22, characters 7-10:
-> Warning: the token ADD is unused.
-> File "parser.mly", line 22, characters 23-26:
-> Warning: the token DIV is unused.
-> File "parser.mly", line 27, characters 7-12:
-> Warning: the token EQUAL is unused.
-> File "parser.mly", line 21, characters 12-17:
-> Warning: the token FALSE is unused.
-> File "parser.mly", line 23, characters 7-10:
-> Warning: the token INT is unused.
-> File "parser.mly", line 28, characters 7-11:
-> Warning: the token LESS is unused.
-> File "parser.mly", line 22, characters 11-16:
-> Warning: the token MINUS is unused.
-> File "parser.mly", line 24, characters 14-17:
-> Warning: the token NOT is unused.
-> File "parser.mly", line 22, characters 17-22:
-> Warning: the token TIMES is unused.
-> File "parser.mly", line 21, characters 7-11:
-> Warning: the token TRUE is unused.
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/ocamldep.opt -modules -impl ast.ml) > _build/default/.main.eobjs/dune__exe__Ast.impl.d
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/ocamldep.opt -modules -impl lexer.ml) > _build/default/.main.eobjs/dune__exe__Lexer.impl.d
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/ocamldep.opt -modules -impl parser__mock.ml.mock) > _build/default/.main.eobjs/parser__mock.impl.d
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -49 -nopervasives -nostdlib -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -o .main.eobjs/byte/dune__exe.cmo -c -impl .main.eobjs/dune__exe.ml-gen)
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/byte/dune__exe__Ast.cmo -c -impl ast.ml)
-$ (cd _build/.sandbox/bf9ad6c75bb26bcf4ab5f0469086db30/default && /home/yukhoi/.opam/autobill/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I .main.eobjs/byte -open Dune__exe -short-paths -i -impl parser__mock.ml.mock) > _build/.sandbox/bf9ad6c75bb26bcf4ab5f0469086db30/default/parser__mock.mli.inferred
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/menhir parser.mly --base parser --infer-read-reply parser__mock.mli.inferred)
-> Warning: 2 states have shift/reduce conflicts.
-> Warning: one state has reduce/reduce conflicts.
-> Warning: 2 shift/reduce conflicts were arbitrarily resolved.
-> Warning: one reduce/reduce conflict was arbitrarily resolved.
-> File "parser.mly", line 80, characters 2-15:
-> Warning: production typs -> typ STAR typs is never reduced.
-> Warning: in total, 1 production is never reduced.
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/ocamldep.opt -modules -intf parser.mli) > _build/default/.main.eobjs/dune__exe__Parser.intf.d
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/ocamldep.opt -modules -impl parser.ml) > _build/default/.main.eobjs/dune__exe__Parser.impl.d
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -49 -nopervasives -nostdlib -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml-gen -no-alias-deps -opaque -o .main.eobjs/native/dune__exe.cmx -c -impl .main.eobjs/dune__exe.ml-gen)
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/native/dune__exe__Ast.cmx -c -impl ast.ml)
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/byte/dune__exe__Parser.cmi -c -intf parser.mli)
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/byte/dune__exe__Printer.cmo -c -impl printer.ml)
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/byte/dune__exe__Lexer.cmo -c -impl lexer.ml)
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/native/dune__exe__Printer.cmx -c -impl printer.ml)
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/native/dune__exe__Lexer.cmx -c -impl lexer.ml)
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I .main.eobjs/byte -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/byte/dune__exe__Main.cmo -c -impl main.ml)
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/native/dune__exe__Main.cmx -c -impl main.ml)
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I .main.eobjs/byte -I .main.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o .main.eobjs/native/dune__exe__Parser.cmx -c -impl parser.ml)
-$ (cd _build/default && /home/yukhoi/.opam/autobill/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o main.exe .main.eobjs/native/dune__exe.cmx .main.eobjs/native/dune__exe__Ast.cmx .main.eobjs/native/dune__exe__Parser.cmx .main.eobjs/native/dune__exe__Lexer.cmx .main.eobjs/native/dune__exe__Printer.cmx .main.eobjs/native/dune__exe__Main.cmx)

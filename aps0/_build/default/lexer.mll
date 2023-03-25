@@ -31,7 +31,7 @@ rule token = parse
   | "FUN"            { FUN }
   | "REC"             { REC }   
   | "int"             { INT }
-  | "bool"           { BOOL }
+  | "BOOL"           { BOOL }
   | "if"             { IF }
   | "and"             { AND }
   | "or"              { OR }

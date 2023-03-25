@@ -25,10 +25,8 @@ type oplogU = Not
 type typeBoolInt = Bool|Int
 
 type typ =
-  Type of typeBoolInt
+  TypeBoolInt of typeBoolInt
 | ASTTypeFunc of typs * typ
-
-
 and typs =
     ASTType of typ
   | ASTTypes of typ * typs

@@ -27,9 +27,10 @@ let () =
   try
     let output = Parser.prog Lexer.token buf in
       close_in f;
-    Printer.print_prog output;
+    let res = Printer.string_of_prog output in
+    print_string res;
     print_string ".\n";
   with
-  | Lexer.Eof ->
-    exit 0;
+    | Lexer.Eof ->
+      exit 0;
 ;;
