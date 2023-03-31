@@ -1,9 +1,9 @@
-# dune exec ./main.exe test/prog4.aps
+# dune exec ./main.exe test/prog1.aps
 # OCAMLPARAM: unset
 # Shared cache: disabled
 # Workspace root: /home/yukhoi/APS/projet/aps0
 # Auto-detected concurrency: 2
-$ /home/yukhoi/.opam/autobill/bin/ocamlc.opt -config > /tmp/dune_bf440e_output
+$ /home/yukhoi/.opam/autobill/bin/ocamlc.opt -config > /tmp/dune_68a286_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
