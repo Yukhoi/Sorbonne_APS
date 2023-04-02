@@ -10,6 +10,8 @@ type value =
   |None
 
   and env = string * value
+
+let alloc id t env mem = ((id , InA(List.length mem)) :: env, mem :: any) (*a verifier*)
   
 (*recuperer id dans le pair(id,type)*)
 let recup_iden arg =
@@ -105,15 +107,15 @@ let rec eval_expr expr env mem =
   |ASTOr(o,e1,e2) -> if eval_expr e1 env = InN(0) then eval_expr e2 env else InN(1)
   |ASTIf(con,e1,e2) -> if eval_expr con env = InN(1) then eval_expr e1 env else eval_expr e2 env
   |ASTExprArgs(args,e) -> InF(e, recup_args(args) ,env)
-  |ASTApp(expr, exprs) -> match (eval_expr expr env) with 
+  |ASTApp(expr, exprs) -> match (eval_expr expr env mem) with 
                             |InF(e', clo, environement) ->
                               (*construire un nouveau environement*)
                               let new_env = (assoc_iden_val clo (verify_env exprs env)) @ environement in
-                                eval_expr e' new_env
+                                eval_expr e' new_env mem
                             |InFR(e', x , clo, environement) as fr ->
                                   (*construire un nouveau environement*)
                                   let new_env = (assoc_iden_val clo (verify_env exprs env)) @ environement in
-                                    eval_expr e' ((x,fr)::new_env)
+                                    eval_expr e' ((x,fr)::new_env) mem
                             | InN(n) -> InN(n)
 (*verifier des valeurs et l'environement *)
 and verify_env exprs env=
@@ -124,29 +126,51 @@ and verify_env exprs env=
 
 let eval_stat stat env output mem= 
   match stat with
-    |ASTSet (id, e) -> if is_in_env id env then (match recup_env id env with 
-                                                  |InA(a) -> set_mem a v mem
-                                                  |_-> failwith "fail in set")
-    |ASTIF
+    |ASTSet (id, e) -> (if is_in_env id env mem then (match recup_env id env with 
+                                                  |InA(a) -> (set_mem a v mem, output)
+                                                  |_-> failwith "pb in set id")
+                        else failwith "fail in set")
+    |ASTIF (e,bk1,bk2) -> (if eval_expr e env mem == InN(1) then eval_block bk1 env output mem
+                          else eval_block bk2 env output mem)
+    |ASTWhile (e,bk) ->(if eval_expr e env mem == InN(1) then eval_block bk env output mem 
+                          else (mem,output))
+    |ASTCall(id, args)-> match recup_env id env with
+                          |InP(bk' , argus ,env_proc) -> (
+                            (*construire un noveau env*)
+                            let new_env = (assoc_iden_val clo (verify_env exprs env mem)) @ env_proc in
+                              eval_block bk' new_env output mem)
+                          |InPR(bk , argus ,env_proc) -> (
+
+                          )
     |ASTEcho (e) -> if is_num (eval_expr e env) then eval_expr e env :: output else failwith "fail in stat"
 
 
-let eval_def def env = 
+let eval_def def env mem= 
   match def with
-      ASTConst(id,t, e) -> (id , eval_expr e env) :: env
-    | ASTFunc (id ,t ,args, e) ->(id , InF(e ,recup_args args ,env )) :: env
-    | ASTFuncRec (id ,t ,args, e ) -> (id , InFR(e , id, recup_args args , env)) ::env
+      ASTConst(id,t, e) -> ((id , eval_expr e env) :: env,mem)
+    | ASTVar(id, t) -> ((id , InA(List.length mem)) :: env, mem :: any) (*a verifier*)
+    | ASTProc(id ,t ,args, bk) -> ((id , InP(bk ,recup_args args ,env )) :: env, mem)
+    | ASTProcRec(id ,t ,args, bk) -> ((id , InPR(bk , id, recup_args args , env)) ::env, mem)
+    | ASTFunc (id ,t ,args, e) ->((id , InF(e ,recup_args args ,env )) :: env, mem)
+    | ASTFuncRec (id ,t ,args, e ) -> ((id , InFR(e , id, recup_args args , env)) ::env, mem)
 
 
-let rec eval_cmds cmds env output = 
-  match cmds with
-   ASTStat(stat) -> eval_stat stat output
-   |ASTDef(def ,cmds) ->eval_cmds cmds (eval_def def env) output
+let rec eval_cmds cs env output mem = 
+  match cs with
+   ASTStat(stat) -> eval_stat stat env output mem
+   |ASTDef(def ,cmds) -> (let (env', mem') = eval_def def env mem in
+                            eval_cmds cmds env' output mem')
+  | ASTStats(s, cmds) -> (let (mem', output') = eval_stat s env output mem in
+                            eval_cmds cmds env output' mem')
 
 let print_val v = 
   match v with
    InN(n) -> Printf.printf "%d \n "n
    | _ -> failwith "not a printable value"
+
+let eval_block cs env output mem =
+  match cs with
+  |ASTBlock(cs) -> eval_cmds cs env output mem
 
 let rec eval_prog prog = 
   match prog with

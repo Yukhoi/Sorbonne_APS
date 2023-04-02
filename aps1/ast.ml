@@ -81,12 +81,8 @@ and cmds =
 and block = 
   ASTBlock of cmds
 
-type blocks = 
-  ASTBlocks of block
-| ASTBlockS of block * blocks
-
 type prog = 
-  ASTProg of cmds
+  ASTProg of block
 
 	
   let string_of_op op = 

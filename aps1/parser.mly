@@ -51,8 +51,13 @@ open Ast
 %start prog
 
 %%
-prog: LBRA blocks RBRA    { $2 }
+prog:  block    { $1 }
 ;
+
+block :
+  LBRA cmds RBRA { ASTBlock($2) }
+;
+
 
 cmds:
   stat                  { ASTStat ($1) }
@@ -118,12 +123,6 @@ exprs :
 | expr exprs {ASTExprs($1,$2)}
 ;
 
-block :
-  LBRA cmds RBRA { ASTBlock($2) }
-;
 
-blocks:
-  block { ASTBlock($1) }
-| block blocks { ASTBlockS($1, $2) }  
-;
+
 
