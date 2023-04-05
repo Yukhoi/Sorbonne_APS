@@ -27,6 +27,7 @@ type typeBoolInt = Bool|Int
 type typ =
   TypeBoolInt of typeBoolInt
 | ASTTypeFunc of typs * typ
+
 and typs =
     ASTType of typ
   | ASTTypes of typ * typs

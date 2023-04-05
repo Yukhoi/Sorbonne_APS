@@ -49,6 +49,7 @@ rule token = parse
   | "mult"            { TIMES }
   | "div"             { DIV }
   | "lt"              { LESS }
+  (* aps 1 *)
   | "VAR"             { VAR }
   | "PROC"            { PROC }
   | "WHILE"           { WHILE }

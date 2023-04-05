@@ -27,8 +27,8 @@ type typeBoolInt = Bool|Int
 type typ =
   Type of typeBoolInt
 | ASTTypeFunc of typs * typ
+(* aps1 *)
 | TypeVoid of void
-
 
 and typs =
     ASTType of typ
@@ -61,12 +61,14 @@ type def =
   ASTConst of string * typ * expr
 | ASTFunc of string * typ * args * expr
 | ASTFuncRec of string * typ * args * expr
+(* aps1 *)
 | ASTVar of string * typ
 | ASTProc of string * args * block
 | ASTProcRec of string * args * block
 
 and stat =
   ASTEcho of expr
+(* aps1 *)
 | ASTSet of string * expr
 | ASTIF of expr * block * block
 | ASTWhile expr * block
@@ -75,9 +77,10 @@ and stat =
 and cmds =
   ASTStat of stat
 | ASTDef of def * cmds
+(* aps1 *)
 | ASTStats of stat * cmds
 
-
+(* aps1 *)
 and block = 
   ASTBlock of cmds
 
