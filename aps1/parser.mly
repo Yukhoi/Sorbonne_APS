@@ -26,6 +26,7 @@ open Ast
 %token ECHO IF FUN FUNC REC
 %token EQUAL
 %token LESS
+(* aps1 *)
 %token IF2 PROC CALL SET WHILE VAR
 
 
@@ -39,6 +40,7 @@ open Ast
 %type <Ast.typs> typs
 %type <Ast.stat> stat
 %type <Ast.typeBoolInt> typeBoolInt
+(* aps1 *)
 %type <Ast.block> block
 %type <Ast.blocks> blocks
 
@@ -50,6 +52,7 @@ open Ast
 
 %start prog
 
+(* aps1 *)
 %%
 prog:  block    { $1 }
 ;
@@ -62,11 +65,13 @@ block :
 cmds:
   stat                  { ASTStat ($1) }
 | def SEMICOLON cmds    { ASTDef($1, $3) }
+(* aps1 *)
 | stat SEMICOLON cmds   { ASTStats ($1, $3) }
 ;
 
 stat:
   ECHO expr             { ASTEcho($2) }
+  (* aps1 *)
 | SET IDENT expr        { ASTSet($2, $3) } 
 | IF2 expr block block  { ASTIF($2, $3, $4) }
 | WHILE expr block      { ASTWhile($2, $3) }
@@ -75,9 +80,11 @@ stat:
 
 def:
   CONST IDENT typ  expr                   {ASTConst($2, $3, $4)}
+  (* aps1 *)
 | CONST IDENT typ                         { ASTVar($2, $3) }  
 | FUNC IDENT typ LBRA args RBRA expr      {ASTFunc($2, $3 ,$5, $7)}
 | FUN REC IDENT typ LBRA args RBRA expr   { ASTFuncRec($3, $4, $6, $8)}
+(* aps1 *)
 | PROC IDENT typ LBRA args RBRA block      { ASTProc($2, $3 ,$5, $7) }
 | PROC REC IDENT typ LBRA args RBRA block      { ASTProcRec($3, $4, $6, $8) }
 
