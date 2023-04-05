@@ -28,6 +28,10 @@ typeCmds(G, stat(X), void) :- typeStat(G, X, void).
 typeCmds(G, [def(X)| Y], void) :- 
     typeDef(G, X, CB),
     typeCmds(CB, Y, void).
+/*stats*/
+typeCmds(G, stats(X)|Y, void) :- 
+    typeStat(G, X, void),
+    typeCmds(CB, Y, void).
 
 
 /*def*/

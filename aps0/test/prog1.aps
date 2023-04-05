@@ -1,4 +1,4 @@
-[ 
-    CONST x int 3 ; ECHO x 
+[
+    CONST x INT 3 ; ECHO x
 ]
 

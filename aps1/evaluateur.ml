@@ -101,11 +101,11 @@ let rec eval_expr expr env mem =
                                           |InA(a) -> recup_mem a mem
                                           |v -> v
                   else failwith (id ^ "is not in environement")
-  |ASTNot(op,e) -> if is_uop op then eval_uop op (eval_expr e env) else failwith ("not an unary oprator")
-  |ASTOp(op,e1,e2)-> if is_op op then eval_op op (eval_expr e1 env) (eval_expr e2 env) else failwith "not a binary operator"
-  |ASTAnd(a,e1,e2) -> if eval_expr e1 env = InN(1) then eval_expr e2 env else InN(0)
-  |ASTOr(o,e1,e2) -> if eval_expr e1 env = InN(0) then eval_expr e2 env else InN(1)
-  |ASTIf(con,e1,e2) -> if eval_expr con env = InN(1) then eval_expr e1 env else eval_expr e2 env
+  |ASTNot(op,e) -> if is_uop op then eval_uop op (eval_expr e env mem) else failwith ("not an unary oprator")
+  |ASTOp(op,e1,e2)-> if is_op op then eval_op op (eval_expr e1 env mem) (eval_expr e2 env mem) else failwith "not a binary operator"
+  |ASTAnd(a,e1,e2) -> if eval_expr e1 env mem= InN(1) then eval_expr e2 env mem else InN(0)
+  |ASTOr(o,e1,e2) -> if eval_expr e1 env mem= InN(0) then eval_expr e2 env mem else InN(1)
+  |ASTIf(con,e1,e2) -> if eval_expr con env mem= InN(1) then eval_expr e1 env mem else eval_expr e2 env mem
   |ASTExprArgs(args,e) -> InF(e, recup_args(args) ,env)
   |ASTApp(expr, exprs) -> match (eval_expr expr env mem) with 
                             |InF(e', clo, environement) ->
@@ -135,12 +135,14 @@ let eval_stat stat env output mem=
     |ASTWhile (e,bk) ->(if eval_expr e env mem == InN(1) then eval_block bk env output mem 
                           else (mem,output))
     |ASTCall(id, args)-> match recup_env id env with
-                          |InP(bk' , argus ,env_proc) -> (
+                          |InP(bk', x , argus ,env_proc) -> (
                             (*construire un noveau env*)
                             let new_env = (assoc_iden_val clo (verify_env exprs env mem)) @ env_proc in
                               eval_block bk' new_env output mem)
-                          |InPR(bk , argus ,env_proc) -> (
-
+                          |InPR(bk', argus ,env_proc) as pr -> (
+                            (*construire un nouveau env*)
+                            let new_env = (assoc_iden_val clo (verify_env exprs env mem)) @ env_proc in
+                              eval_block bk' ((x, pr)::new_env) output mem
                           )
     |ASTEcho (e) -> if is_num (eval_expr e env) then eval_expr e env :: output else failwith "fail in stat"
 

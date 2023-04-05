@@ -30,7 +30,7 @@ rule token = parse
   | "CONST"           { CONST }
   | "FUN"            { FUN }
   | "REC"             { REC }   
-  | "int"             { INT }
+  | "INT"             { INT }
   | "BOOL"           { BOOL }
   | "if"             { IF }
   | "and"             { AND }
