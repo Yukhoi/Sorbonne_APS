@@ -8,6 +8,8 @@
 (* ==  Arbre de syntaxe abstraite                                          == *)
 (* ========================================================================== *)
 
+
+
 type op = 
 | Eq 
 | Lt 
@@ -15,6 +17,15 @@ type op =
 | Sub 
 | Mul 
 | Div
+
+let string_of_op op = 
+  match op with
+    Add -> "add"
+  | Mul -> "mul"
+  | Sub -> "sub"
+  | Div -> "div"
+  | Eq -> "eq"
+  | Lt -> "lt"
 
 type opAnd = And
 
@@ -24,11 +35,13 @@ type oplogU = Not
 
 type typeBoolInt = Bool|Int
 
+type typeVoid = Void
+
 type typ =
   Type of typeBoolInt
 | ASTTypeFunc of typs * typ
 (* aps1 *)
-| TypeVoid of void
+| TypeVoid of typeVoid
 
 and typs =
     ASTType of typ
@@ -71,8 +84,8 @@ and stat =
 (* aps1 *)
 | ASTSet of string * expr
 | ASTIF of expr * block * block
-| ASTWhile expr * block
-| ASTCall string * exprs
+| ASTWhile of expr * block
+| ASTCall of string * exprs
       
 and cmds =
   ASTStat of stat
@@ -86,13 +99,3 @@ and block =
 
 type prog = 
   ASTProg of block
-
-	
-  let string_of_op op = 
-    match op with
-      Add -> "add"
-    | Mul -> "mul"
-    | Sub -> "sub"
-    | Div -> "div"
-    | Eq -> "eq"
-    | Lt -> "lt"

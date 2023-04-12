@@ -32,6 +32,7 @@ rule token = parse
   | "REC"             { REC }   
   | "int"             { INT }
   | "bool"           { BOOL }
+  | "void"            { VOID }
   | "if"             { IF }
   | "and"             { AND }
   | "or"              { OR }
@@ -43,12 +44,6 @@ rule token = parse
     (*symboles primitifs*)
   | "true"           { TRUE }
   | "false"           { FALSE }
-  | "eq"              { EQUAL }
-  | "add"             { ADD }
-  | "sub"            { MINUS }
-  | "mult"            { TIMES }
-  | "div"             { DIV }
-  | "lt"              { LESS }
   (* aps 1 *)
   | "VAR"             { VAR }
   | "PROC"            { PROC }

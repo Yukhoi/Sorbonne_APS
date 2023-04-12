@@ -24,7 +24,7 @@ rule token = parse
   | ':'              { COLON }
   | ';'              { SEMICOLON }
   | '*'              { STAR }
-  | "->"             { ARROW }
+  | "-"             { ARROW }
     (*Mots clef*)
   | "ECHO"           { ECHO }
   | "CONST"           { CONST }
@@ -35,6 +35,8 @@ rule token = parse
   | "if"             { IF }
   | "and"             { AND }
   | "or"              { OR }
+  | "not"            { NOT } 
+  
     (*Constantes numeriques*)
   | ['0'-'9']+('.'['0'-'9'])? as lxm { NUM(int_of_string lxm) }
     (*Identificateurs*)

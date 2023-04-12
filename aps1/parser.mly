@@ -19,13 +19,10 @@ open Ast
 %token LBRA RBRA
 %token COMA COLON SEMICOLON STAR ARROW
 %token TRUE FALSE
-%token ADD MINUS TIMES DIV
-%token INT BOOL
+%token INT BOOL VOID
 %token OR AND NOT
 %token CONST
 %token ECHO IF FUN FUNC REC
-%token EQUAL
-%token LESS
 (* aps1 *)
 %token IF2 PROC CALL SET WHILE VAR
 
@@ -42,7 +39,6 @@ open Ast
 %type <Ast.typeBoolInt> typeBoolInt
 (* aps1 *)
 %type <Ast.block> block
-%type <Ast.blocks> blocks
 
 
 
@@ -54,7 +50,7 @@ open Ast
 
 (* aps1 *)
 %%
-prog:  block    { $1 }
+prog:  cmds    { $1 }
 ;
 
 block :
@@ -75,18 +71,18 @@ stat:
 | SET IDENT expr        { ASTSet($2, $3) } 
 | IF2 expr block block  { ASTIF($2, $3, $4) }
 | WHILE expr block      { ASTWhile($2, $3) }
-| CALL IDENT expr       { ASTCall($2, $3) }
+| CALL IDENT exprs       { ASTCall($2, $3) }
 ;
 
 def:
   CONST IDENT typ  expr                   {ASTConst($2, $3, $4)}
   (* aps1 *)
-| CONST IDENT typ                         { ASTVar($2, $3) }  
+| VAR IDENT typ                         { ASTVar($2, $3) }  
 | FUNC IDENT typ LBRA args RBRA expr      {ASTFunc($2, $3 ,$5, $7)}
 | FUN REC IDENT typ LBRA args RBRA expr   { ASTFuncRec($3, $4, $6, $8)}
 (* aps1 *)
-| PROC IDENT typ LBRA args RBRA block      { ASTProc($2, $3 ,$5, $7) }
-| PROC REC IDENT typ LBRA args RBRA block      { ASTProcRec($3, $4, $6, $8) }
+| PROC IDENT LBRA args RBRA block      { ASTProc($2, $4, $6) }
+| PROC REC IDENT LBRA args RBRA block      { ASTProcRec($3, $5, $7) }
 
 ;
 
@@ -95,8 +91,12 @@ typeBoolInt:
 | INT         {Bool}          
 ;
 
+typeVoid:
+|  VOID        {Void}
+
 typ:
   typeBoolInt         { Type($1) }
+| typeVoid            { TypeVoid($1) }
 | typs ARROW typ      { ASTTypeFunc($1, $3) }
 ;
 
@@ -122,6 +122,7 @@ expr:
 | LPAR IF expr expr expr RPAR { ASTIf($3, $4, $5) }
 | LPAR AND expr expr RPAR     { ASTAnd(Ast.And, $3, $4) }
 | LPAR OR expr expr RPAR      {ASTOr(Ast.Or,$3, $4)}
+| LPAR NOT expr RPAR          { ASTNot(Ast.Not,$3) }
 | LBRA args RBRA expr         {ASTExprArgs($2,$4)}
 ;
 

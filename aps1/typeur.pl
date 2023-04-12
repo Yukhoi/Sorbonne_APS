@@ -14,9 +14,18 @@ checkArgs(G,[ARG|ARGS],[ARGTYPE|ARGSTYPE]) :-
 inEnv([(X,T)|G], X, T).
 inEnv([_|G], X, T) :- inEnv(G, X, T).
 
+/*env initial*/
+g0([(id(add),[int,int],int),
+    (id(sub),[int,int],int),
+    (id(mult),[int,int],int), 
+    (id(mult),[int,int],int), 
+    (id(div),[int,int],int), 
+    (id(eq),[int,int],bool), 
+    (id(lt),[int,int],bool),
+    (id(not),[bool],bool)]).
 
 /*programme*/
-typeProg(G, prog(X), void) :- typeCmds(G, X, void).
+typeProg(G, prog(X), void) :- typeBlock(G, X, void).
 
 /*block*/
 typeBlock(G, block(X), void) :- typeCmds(G, X, void).
@@ -108,14 +117,6 @@ typeExpr(G, and(E1,E2),bool) :-
     typeExpr(G , E1, bool ),
     typeExpr(G , E2, bool ).
 /*app*/
-/*typeExpr(G, app(E, EXPRS), T) :-
-    typeExpr(G, E, (ARGS_T, T)),
-    typeExprList(G, EXPRS, ARGS_T).
-
-typeExprList(G, [], []).
-typeExprList(G, [E|ES], [T|TS]):-
-    typeExprList(G, ES, TS),
-    typeExprList(G, E, T).*/
 typeExpr(G,app(id(F),ARGS),TF) :-
 	assoc(F,G,(ARGSTYPE,TF)),
 	checkArgs(G,ARGS,ARGSTYPE).

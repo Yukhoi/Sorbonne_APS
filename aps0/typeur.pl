@@ -85,15 +85,6 @@ typeExpr(G, and(E1,E2),bool) :-
     typeExpr(G , E1, bool ),
     typeExpr(G , E2, bool ).
 /*app*/
-/*typeExpr(G, app(E, EXPRS), T) :-
-    typeExpr(G, E, (ARGS_T, T)),
-    typeExprList(G, EXPRS, ARGS_T).
-
-typeExprList(G, [], []).
-typeExprList(G, [E|ES], [T|TS]):-
-    typeExprList(G, ES, TS),
-    typeExprList(G, E, T).*/
-
 typeExpr(G,app(id(F),ARGS),TF) :-
 	assoc(id(F),G,(ARGSTYPE,TF)),
 	checkArgs(G,ARGS,ARGSTYPE).

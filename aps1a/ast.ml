@@ -8,6 +8,16 @@
 (* ==  Arbre de syntaxe abstraite                                          == *)
 (* ========================================================================== *)
 
+let string_of_op op = 
+  match op with
+    Add -> "add"
+  | Mul -> "mul"
+  | Sub -> "sub"
+  | Div -> "div"
+  | Eq -> "eq"
+  | Lt -> "lt"
+
+
 type op = 
 | Eq 
 | Lt 
@@ -86,13 +96,3 @@ and block =
 
 type prog = 
   ASTProg of block
-
-	
-  let string_of_op op = 
-    match op with
-      Add -> "add"
-    | Mul -> "mul"
-    | Sub -> "sub"
-    | Div -> "div"
-    | Eq -> "eq"
-    | Lt -> "lt"
