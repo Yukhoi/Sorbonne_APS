@@ -119,16 +119,16 @@ let rec eval_expr expr env =
   |ASTExprArgs(args,e) -> InF(e, recup_args(args) ,env)
   |ASTApp(expr, exprs) -> let vs = (verify_env exprs env) in
                           if is_operateur expr then call expr vs else 
-                        match (eval_expr expr env) with 
-                            |InF(e', clo, environement) ->
-                              (*construire un nouveau environement*)
-                              let new_env = (assoc_iden_val clo vs) @ environement in
-                                eval_expr e' new_env
-                            |InFR(e', x , clo, environement) as fr ->
+                            match (eval_expr expr env) with 
+                                |InF(e', clo, environement) ->
                                   (*construire un nouveau environement*)
                                   let new_env = (assoc_iden_val clo vs) @ environement in
-                                    eval_expr e' ((x,fr)::new_env)
-                            | InN(n) -> InN(n)
+                                    eval_expr e' new_env
+                                |InFR(e', x , clo, environement) as fr ->
+                                      (*construire un nouveau environement*)
+                                      let new_env = (assoc_iden_val clo vs) @ environement in
+                                        eval_expr e' ((x,fr)::new_env)
+                                | InN(n) -> InN(n)
 (*verifier des valeurs et l'environement *)
 and verify_env exprs env =
   match exprs with
@@ -162,12 +162,3 @@ let eval_prog prog =
     List.iter (function x -> print_val x) (List.rev output) in
   print_output (eval_cmds prog [] []) 
   
-    (*
-let _ =
-  try
-      let file = open_in Sys.argv.(1) in
-      let lexbuf = Lexing.from_channel fl in
-		  let p = Parser.prog Lexer.token lexbuf in
-			      (eval_prog p)
-	     with Lexer.Eof -> exit 0
-       *)

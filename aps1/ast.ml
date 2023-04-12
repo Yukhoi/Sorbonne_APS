@@ -38,7 +38,7 @@ type typeBoolInt = Bool|Int
 type typeVoid = Void
 
 type typ =
-  Type of typeBoolInt
+  TypeBoolInt of typeBoolInt
 | ASTTypeFunc of typs * typ
 (* aps1 *)
 | TypeVoid of typeVoid
@@ -86,6 +86,7 @@ and stat =
 | ASTIF of expr * block * block
 | ASTWhile of expr * block
 | ASTCall of string * exprs
+| ASTCallPrim of expr * exprs
       
 and cmds =
   ASTStat of stat
@@ -98,4 +99,4 @@ and block =
   ASTBlock of cmds
 
 type prog = 
-  ASTProg of block
+  ASTProg of cmds

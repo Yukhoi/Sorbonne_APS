@@ -45,28 +45,27 @@ typeCmds(G, stats(X)|Y, void) :-
 
 /*def*/
 /*const*/
-typeDef(G, const(X, T, E), [(X,T)|G]) :- 
-    append((X,T),G,G1),
-    typeExpr(G1, E, T).
-/*var*/
-typeVar(G, var(X, T), [(X,T)|G]).     
+typeDef(G, const(X, T, E), [(id(X),[],T)|G]) :- 
+    typeExpr([(id(X),[],T)|G], E, T).
 /*func*/
-typeDef(G, fun(X, T, ARG, E), [(X,(TARG, T))|G]) :- 
+typeDef(G, fun(X, T, ARG, E),G2) :- 
+    append([(id(X),TARG, T)],G,G2),
     append(ARG, G, G1),
     get_typeArgs(ARG,TARG),
     typeExpr(G1, E ,T).
 /*func rec*/
-typeDef(G, funRec(X, T, ARG, E), [(X,(TARG, T))|G]) :-
+typeDef(G, funRec(X, T, ARG, E), G2) :-
     get_typeArgs(ARG,TARG),
-    append(ARG, G, G1),
-    typeExpr([(X,typeFunc(TARG, T))|G1], E ,T).
+    append([(id(X),TARG, T)], G, G2),
+    append(ARG, G2, G1),
+    typeExpr(G1, E ,T).
 /*proc*/
 typeDef(G, proc(X, ARGS, B), [(X,(TARG, void))|G]) :-
     get_typeArgs(ARG,TARG),
     append(ARG, G, G1),
     typeBlock(G1, B, void).
 /*proc rec*/
-typeDef(G, proc(X, ARGS, B), [(X,(TARG, void))|G]) :-
+typeDef(G, procRec(X, ARGS, B), [(X,(TARG, void))|G]) :-
     get_typeArgs(ARG,TARG),
     append(ARG, G, G1),
     typeBlock([(X,typeProc(TARG, T))|G1], B, void).

@@ -18,11 +18,11 @@ open Ast
 %token LPAR RPAR 
 %token LBRA RBRA
 %token COMA COLON SEMICOLON STAR ARROW
-%token TRUE FALSE
 %token INT BOOL VOID
 %token OR AND NOT
 %token CONST
 %token ECHO IF FUN FUNC REC
+%token TRUE FALSE
 (* aps1 *)
 %token IF2 PROC CALL SET WHILE VAR
 
@@ -31,7 +31,7 @@ open Ast
 %type <Ast.expr> expr
 %type <Ast.exprs> exprs
 %type <Ast.cmds> cmds
-%type <Ast.cmds> prog
+%type <Ast.prog> prog
 %type <Ast.def> def
 %type <Ast.typ> typ
 %type <Ast.typs> typs
@@ -50,7 +50,7 @@ open Ast
 
 (* aps1 *)
 %%
-prog:  cmds    { $1 }
+prog: LBRA cmds RBRA  { ASTProg($2) }
 ;
 
 block :
@@ -72,6 +72,7 @@ stat:
 | IF2 expr block block  { ASTIF($2, $3, $4) }
 | WHILE expr block      { ASTWhile($2, $3) }
 | CALL IDENT exprs       { ASTCall($2, $3) }
+| CALL expr exprs       {ASTCallPrim($2, $3)}
 ;
 
 def:
@@ -95,7 +96,7 @@ typeVoid:
 |  VOID        {Void}
 
 typ:
-  typeBoolInt         { Type($1) }
+  typeBoolInt         { TypeBoolInt($1) }
 | typeVoid            { TypeVoid($1) }
 | typs ARROW typ      { ASTTypeFunc($1, $3) }
 ;
