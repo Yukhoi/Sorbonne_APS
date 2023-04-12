@@ -30,15 +30,34 @@ rule token = parse
   | "CONST"           { CONST }
   | "FUN"            { FUN }
   | "REC"             { REC }   
-  | "INT"             { INT }
-  | "BOOL"           { BOOL }
+  | "int"             { INT }
+  | "bool"           { BOOL }
   | "if"             { IF }
   | "and"             { AND }
   | "or"              { OR }
+  | "not"            { NOT } 
     (*Constantes numeriques*)
   | ['0'-'9']+('.'['0'-'9'])? as lxm { NUM(int_of_string lxm) }
     (*Identificateurs*)
   | ['a'-'z']['a'-'z''A'-'Z''0'-'9']* as lxm { IDENT(lxm) }
+    (*symboles primitifs*)
+  | "true"           { TRUE }
+  | "false"           { FALSE }
+  | "eq"              { EQUAL }
+  | "add"             { ADD }
+  | "sub"            { MINUS }
+  | "mult"            { TIMES }
+  | "div"             { DIV }
+  | "lt"              { LESS }
+  (* aps 1 *)
+  | "VAR"             { VAR }
+  | "PROC"            { PROC }
+  | "WHILE"           { WHILE }
+  | "CALL"            { CALL }
+  | "SET"             { SET }
+  | "IF"              { IF2 }
+  
+  
  
   | eof              { raise Eof }
   

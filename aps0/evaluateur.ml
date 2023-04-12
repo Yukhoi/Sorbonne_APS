@@ -75,6 +75,36 @@ let eval_op op v1 v2 =
     | Mul -> InN(get_int(v1) * get_int(v2))
     | Div -> InN(get_int(v1) / get_int(v2))
 
+let eval_opperateur op vs = 
+  match vs with
+  |[v1 ; v2] ->
+    (match op with
+        "eq" -> (if (get_int(v1) = get_int(v2)) then InN(1) else InN(0))
+      | "lt" -> (if (get_int(v1) < get_int(v2)) then InN(1) else InN(0))
+      | "add" -> InN(get_int(v1) + get_int(v2))
+      | "sub" -> InN(get_int(v1) - get_int(v2))
+      | "mult" -> InN(get_int(v1) * get_int(v2))
+      | "div" -> InN(get_int(v1) / get_int(v2))
+      |_ -> assert false)
+  | [v] -> 
+    (  match op,v with
+      |"not",InN(n) -> InN(if n=0 then 1 else 0)
+      |_-> assert false)
+  |_ -> assert false
+  
+
+let call e vs = 
+  match e with
+  
+  |ASTId(op) -> eval_opperateur op vs
+  |_ -> assert false
+
+
+
+let is_operateur e =
+  match e with 
+  |ASTId("add" | "sub" | "mult" | "div" | "eq" | "lt") -> true
+  |_ -> false
 
 let rec eval_expr expr env = 
   match expr with 
@@ -87,14 +117,16 @@ let rec eval_expr expr env =
   |ASTOr(_,e1,e2) -> if eval_expr e1 env = InN(0) then eval_expr e2 env else InN(1)
   |ASTIf(con,e1,e2) -> if eval_expr con env = InN(1) then eval_expr e1 env else eval_expr e2 env
   |ASTExprArgs(args,e) -> InF(e, recup_args(args) ,env)
-  |ASTApp(expr, exprs) -> match (eval_expr expr env) with 
+  |ASTApp(expr, exprs) -> let vs = (verify_env exprs env) in
+                          if is_operateur expr then call expr vs else 
+                        match (eval_expr expr env) with 
                             |InF(e', clo, environement) ->
                               (*construire un nouveau environement*)
-                              let new_env = (assoc_iden_val clo (verify_env exprs env)) @ environement in
+                              let new_env = (assoc_iden_val clo vs) @ environement in
                                 eval_expr e' new_env
                             |InFR(e', x , clo, environement) as fr ->
                                   (*construire un nouveau environement*)
-                                  let new_env = (assoc_iden_val clo (verify_env exprs env)) @ environement in
+                                  let new_env = (assoc_iden_val clo vs) @ environement in
                                     eval_expr e' ((x,fr)::new_env)
                             | InN(n) -> InN(n)
 (*verifier des valeurs et l'environement *)

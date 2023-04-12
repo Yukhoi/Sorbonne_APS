@@ -25,8 +25,10 @@ type oplogU = Not
 type typeBoolInt = Bool|Int
 
 type typ =
-  TypeBoolInt of typeBoolInt
+  Type of typeBoolInt
 | ASTTypeFunc of typs * typ
+(* aps1 *)
+| TypeVoid of void
 
 and typs =
     ASTType of typ
@@ -52,23 +54,38 @@ type expr =
 
 
 and exprs = 
-    ASTExpr of expr
-  | ASTExprs of expr * exprs 
+  ASTExpr of expr
+| ASTExprs of expr * exprs 
 
 type def =
   ASTConst of string * typ * expr
 | ASTFunc of string * typ * args * expr
 | ASTFuncRec of string * typ * args * expr
+(* aps1 *)
+| ASTVar of string * typ
+| ASTProc of string * args * block
+| ASTProcRec of string * args * block
 
-type stat =
+and stat =
   ASTEcho of expr
+(* aps1 *)
+| ASTSet of string * expr
+| ASTIF of expr * block * block
+| ASTWhile expr * block
+| ASTCall string * exprs
       
-type cmds =
+and cmds =
   ASTStat of stat
 | ASTDef of def * cmds
+(* aps1 *)
+| ASTStats of stat * cmds
+
+(* aps1 *)
+and block = 
+  ASTBlock of cmds
 
 type prog = 
-  ASTProg of cmds
+  ASTProg of block
 
 	
   let string_of_op op = 

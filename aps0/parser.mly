@@ -61,13 +61,13 @@ stat:
 
 def:
   CONST IDENT typ  expr   {ASTConst($2, $3, $4)}
-| FUNC IDENT typ LBRA args RBRA expr {ASTFunc($2, $3 ,$5, $7)}
+| FUN IDENT typ LBRA args RBRA expr {ASTFunc($2, $3 ,$5, $7)}
 | FUN REC IDENT typ LBRA args RBRA expr {ASTFuncRec($3, $4, $6, $8)}
 ;
 
 typeBoolInt:
   BOOL        {Bool}          
-| NUM         {Int}          
+| INT         {Int}          
 ;
 
 typ:
@@ -80,12 +80,12 @@ typs:
 | typ STAR typs         { ASTTypes($1,$3)}
 ;
 arg:
- IDENT COLON typ      {ASTArg1($1,$3)}
+ IDENT COLON typ      { ASTArg1($1,$3) }
 ;
 
 args:
-  arg                   {ASTArg2($1)}
-| arg COMA args         {ASTArgs($1,$3)}
+  arg                   { ASTArg2($1) }
+| arg COMA args         { ASTArgs($1,$3) }
 ;
 
 
@@ -95,15 +95,15 @@ expr:
 | LPAR expr exprs RPAR        { ASTApp($2, $3) }
 | LPAR IF expr expr expr RPAR { ASTIf($3, $4, $5) }
 | LPAR AND expr expr RPAR     { ASTAnd(Ast.And, $3, $4) }
-| LPAR OR expr expr RPAR      {ASTOr(Ast.Or,$3, $4)}
-| LPAR NOT expr RPAR          {ASTNot(Ast.Not,$3)}
-| LBRA args RBRA expr         {ASTExprArgs($2,$4)}
+| LPAR OR expr expr RPAR      { ASTOr(Ast.Or,$3, $4) }
+| LPAR NOT expr RPAR          { ASTNot(Ast.Not,$3) }
+| LBRA args RBRA expr         { ASTExprArgs($2,$4) }
 
 ;
 
 exprs :
-  expr       {ASTExpr ($1) }
-| expr exprs {ASTExprs($1,$2)}
+  expr       { ASTExpr ($1) }
+| expr exprs { ASTExprs($1,$2)}
 ;
 
 
