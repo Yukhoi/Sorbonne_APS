@@ -57,8 +57,6 @@ type expr =
   | ASTIf of expr * expr * expr
   | ASTAnd of opAnd * expr * expr
   | ASTOr of opOr * expr * expr 
-  | ASTNot of oplogU * expr
-  | ASTOp of op * expr * expr
   | ASTExprArgs of args * expr
 
 

@@ -72,7 +72,6 @@ stat:
 | IF2 expr block block  { ASTIF($2, $3, $4) }
 | WHILE expr block      { ASTWhile($2, $3) }
 | CALL IDENT exprs       { ASTCall($2, $3) }
-| CALL expr exprs       {ASTCallPrim($2, $3)}
 ;
 
 def:
@@ -88,8 +87,8 @@ def:
 ;
 
 typeBoolInt:
-  BOOL        {Int}          
-| INT         {Bool}          
+  INT        {Int}          
+| BOOL         {Bool}          
 ;
 
 typeVoid:
@@ -123,7 +122,6 @@ expr:
 | LPAR IF expr expr expr RPAR { ASTIf($3, $4, $5) }
 | LPAR AND expr expr RPAR     { ASTAnd(Ast.And, $3, $4) }
 | LPAR OR expr expr RPAR      {ASTOr(Ast.Or,$3, $4)}
-| LPAR NOT expr RPAR          { ASTNot(Ast.Not,$3) }
 | LBRA args RBRA expr         {ASTExprArgs($2,$4)}
 ;
 

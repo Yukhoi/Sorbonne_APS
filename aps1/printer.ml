@@ -15,7 +15,7 @@ let rec string_of_type t =
       (match t with 
         |Int -> "int"
         |Bool -> "bool")
-    |TypeVoid(t) -> ("void")
+    |TypeVoid(_) -> ("void")
     |ASTTypeFunc(ts, t ) -> 
       "([" ^ string_of_types ts ^ "]," ^ string_of_type t ^ ")"
 and string_of_types ts = 
@@ -39,12 +39,8 @@ let rec string_of_expr env e =
     ASTNum n -> string_of_int n
     |ASTBool n -> if n then "true" else "false"
     |ASTId x -> "id(" ^ x ^ ")"
-    |ASTOp(op, e1, e2) -> 
-      string_of_op op ^ "(" ^ string_of_expr env e1 ^ "," ^ string_of_expr env e2 ^ ")" 
     |ASTIf (e1 ,e2, e3) ->
       "if(" ^ string_of_expr env e1 ^ "," ^ string_of_expr env e2 ^ string_of_expr env e3 ^ ")"
-    |ASTNot(_,e1) -> 
-      "not(" ^ string_of_expr env e1 ^ ")"
     |ASTAnd (_,e1,e2)->
       "and(" ^ string_of_expr env e1 ^ "," ^ string_of_expr env e2 ^ ")"
     |ASTOr (_,e1,e2)->
@@ -59,7 +55,7 @@ and string_of_exprs env es =
     | ASTExprs(e ,es) -> 
       string_of_expr env e ^ "," ^ string_of_exprs env es
           
-let string_of_def env d = 
+let rec string_of_def env d = 
   match d with 
     ASTConst (str ,t, e) -> 
       "const(" ^ str ^ "," ^ string_of_type t ^ "," ^ string_of_expr (List.append env ["("^str^","^ string_of_type t ^")"]) e ^ ")"
@@ -75,34 +71,32 @@ let string_of_def env d =
       "procRec(" ^ id ^ ",[" ^ string_of_args a ^ "]," ^ string_of_block env b ^ ")"
 
 
-let string_of_stat env s = 
+and string_of_stat env s = 
   match s with 
     ASTEcho e ->
       ("echo(" ^ string_of_expr env e ^ ")")
     |ASTSet (id, e) ->
-      ("set(id(" ^ id ^ ")," ^ string_of_expr env e ")")
+      ("set(id(" ^ id ^ ")," ^ string_of_expr env e ^ ")")
     |ASTIF(con, bk1, bk2) ->
       ("iF(" ^ string_of_expr env con ^ "," ^string_of_block env bk1 ^ "," ^ string_of_block env bk2 ^ ")")
     |ASTWhile(con, bk) -> 
       ("wHile(" ^ string_of_expr env con ^ "," ^ string_of_block env bk ^ ")")
-    |ASTCallPrim(id, args) ->
-      ("call(id(" ^ string_of_expr env id ^ "),[" ^ string_of_args env args ^ "])")
     |ASTCall(id,args) ->
-      ("call(id(" ^ id ^ "),[" ^ string_of_args env args ^ "])")
+      ("call(id(" ^ id ^ "),[" ^ string_of_exprs env args ^ "])")
 
-let rec string_of_cmds env cs = 
+and string_of_cmds env cs = 
   match cs with 
     ASTStat s -> 
       ( "stat(" ^ string_of_stat env s ^ ")")
     |ASTDef (d,c) -> 
-      ("def(" ^ string_of_def env d ^ ");(" ^ string_of_cmds env c ^ ")")
+      ("def(" ^ string_of_def env d ^ ")," ^ string_of_cmds env c)
     |ASTStats (s,c) ->
-      ("stats(" ^ string_of_stat s ^ ");(" ^ string_of_cmds env c ^ ")")
+      ("stat(" ^ string_of_stat env s ^ ")," ^ string_of_cmds env c )
 
-let rec string_of_block env bl = 
+and string_of_block env bl = 
   match bl with
     ASTBlock cs -> 
-      ("block(" ^ string_of_cmds env cs ^ ")" )
+      ("block([" ^ string_of_cmds env cs ^ "])" )
 
 let rec print_env e =
   match e with
@@ -114,7 +108,9 @@ let rec print_env e =
 
 let string_of_prog p = 
   let env = [] in 
-    "typeProg([" ^ String.concat "" env ^ "],prog(" ^ string_of_block env p ^ "), void)";
+  match p with 
+  | ASTProg(p) ->
+    "typeProg(prog([" ^ string_of_cmds env p ^ "]), void)";
 
 ;;
 

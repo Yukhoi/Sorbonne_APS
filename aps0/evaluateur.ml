@@ -56,24 +56,6 @@ let eval_uop op e =
   |Not -> (if get_int e = 1 then InN(0)
           else InN(1))
 
-(*verifier s'il est operateur algo*)
-let is_op op = 
-  match op with
-      Eq -> true
-    | Lt -> true
-    | Add -> true
-    | Sub -> true
-    | Mul -> true
-    | Div -> true
-
-let eval_op op v1 v2 = 
-  match op with
-      Eq -> (if (get_int(v1) = get_int(v2)) then InN(1) else InN(0))
-    | Lt -> (if (get_int(v1) < get_int(v2)) then InN(1) else InN(0))
-    | Add -> InN(get_int(v1) + get_int(v2))
-    | Sub -> InN(get_int(v1) - get_int(v2))
-    | Mul -> InN(get_int(v1) * get_int(v2))
-    | Div -> InN(get_int(v1) / get_int(v2))
 
 let eval_opperateur op vs = 
   match vs with
@@ -95,11 +77,8 @@ let eval_opperateur op vs =
 
 let call e vs = 
   match e with
-  
   |ASTId(op) -> eval_opperateur op vs
   |_ -> assert false
-
-
 
 let is_operateur e =
   match e with 
@@ -111,8 +90,6 @@ let rec eval_expr expr env =
   |ASTBool(e) -> if (e) then InN(1) else InN(0)
   |ASTNum (e) -> InN(e)
   |ASTId(id) -> if is_in_env id env then recup_env id env else failwith (id ^ " is not in environement")
-  |ASTNot(op,e) -> if is_uop op then eval_uop op (eval_expr e env) else failwith ("not an unary oprator")
-  |ASTOp(op,e1,e2)-> if is_op op then eval_op op (eval_expr e1 env) (eval_expr e2 env) else failwith "not a binary operator"
   |ASTAnd(_,e1,e2) -> if eval_expr e1 env = InN(1) then eval_expr e2 env else InN(0)
   |ASTOr(_,e1,e2) -> if eval_expr e1 env = InN(0) then eval_expr e2 env else InN(1)
   |ASTIf(con,e1,e2) -> if eval_expr con env = InN(1) then eval_expr e1 env else eval_expr e2 env

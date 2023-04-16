@@ -34,7 +34,7 @@ type opOr = Or
 type oplogU = Not
 
 type typeBoolInt = Bool|Int
-
+(* aps1 *)
 type typeVoid = Void
 
 type typ =
@@ -61,8 +61,6 @@ type expr =
   | ASTIf of expr * expr * expr
   | ASTAnd of opAnd * expr * expr
   | ASTOr of opOr * expr * expr 
-  | ASTNot of oplogU * expr
-  | ASTOp of op * expr * expr
   | ASTExprArgs of args * expr
 
 
@@ -86,7 +84,6 @@ and stat =
 | ASTIF of expr * block * block
 | ASTWhile of expr * block
 | ASTCall of string * exprs
-| ASTCallPrim of expr * exprs
       
 and cmds =
   ASTStat of stat
