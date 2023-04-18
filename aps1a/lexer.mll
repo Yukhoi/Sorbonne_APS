@@ -35,7 +35,6 @@ rule token = parse
   | "if"             { IF }
   | "and"             { AND }
   | "or"              { OR }
-  | "not"            { NOT }
   (* aps1a *)
   | "var"            { VALEUR }
   | "adr"            { ADR } 

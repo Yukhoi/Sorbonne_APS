@@ -118,6 +118,8 @@ args:
 expr:
   NUM                         { ASTNum($1) }
 | IDENT                       { ASTId($1) }
+| TRUE                        { ASTBool(true) }
+| FALSE                       { ASTBool(false) }
 | LPAR expr exprs RPAR        { ASTApp($2, $3) }
 | LPAR IF expr expr expr RPAR { ASTIf($3, $4, $5) }
 | LPAR AND expr expr RPAR     { ASTAnd(Ast.And, $3, $4) }

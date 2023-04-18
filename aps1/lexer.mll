@@ -36,7 +36,6 @@ rule token = parse
   | "if"             { IF }
   | "and"             { AND }
   | "or"              { OR }
-  | "not"            { NOT }
      (* aps 1 *)
   | "VAR"             { VAR }
   | "PROC"            { PROC }

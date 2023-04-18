@@ -74,7 +74,7 @@ let eval_uop op e =
 
 let is_operateur e =
   match e with 
-  |ASTId("add" | "sub" | "mult" | "div" | "eq" | "lt") -> true
+  |ASTId("add" | "sub" | "mult" | "div" | "eq" | "lt" | "not") -> true
   |_ -> false
           
 let eval_opperateur op vs = 
@@ -102,7 +102,7 @@ let call e vs =
 
 let is_op e =
   match e with
-  ("add" | "sub" | "mult" | "div" | "eq" | "lt") -> true
+  ("add" | "sub" | "mult" | "div" | "eq" | "lt" | "not") -> true
   |_ -> false
 
 let rec eval_expr expr env mem = 
