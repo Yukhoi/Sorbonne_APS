@@ -55,7 +55,7 @@ let assoc_iden_val expr env =
 let get_int v =
   match v with
   |InN(v) -> v
-  |_ -> failwith ("not a number")
+  |_ -> failwith "not a number"
 
 let is_num e = 
   match e with 
@@ -139,32 +139,18 @@ and verify_env exprs env mem=
 
 let rec eval_expr_for_call expr env mem = 
   match expr with 
-  |ASTBool(e) -> if (e) then InN(1) else InN(0)
-  |ASTNum (e) -> InN(e)
-  |ASTId(id) -> if is_in_env id env then recup_env id env 
-                  else failwith (id ^ "is not in environement")
-  |ASTAnd(_,e1,e2) -> if eval_expr e1 env mem = InN(1) then eval_expr e2 env mem else InN(0)
-  |ASTOr(_,e1,e2) -> if eval_expr e1 env mem = InN(0) then eval_expr e2 env mem else InN(1)
-  |ASTIf(con,e1,e2) -> if eval_expr con env mem = InN(1) then eval_expr e1 env mem else eval_expr e2 env mem
-  |ASTExprArgs(args,e) -> InF(e, recup_args(args) ,env)
-  |ASTApp(expr, exprs) -> let vs = (verify_env exprs env mem) in
-                            if is_operateur expr then call expr vs else 
-                              match (eval_expr expr env mem) with 
-                                  |InF(e', clo, environement) ->
-                                    (*construire un nouveau environement*)
-                                    let new_env = (assoc_iden_val clo vs) @ environement in
-                                      eval_expr e' new_env mem
-                                  |InFR(e', x , clo, environement) as fr ->
-                                        (*construire un nouveau environement*)
-                                        let new_env = (assoc_iden_val clo vs) @ environement in
-                                          eval_expr e' ((x,fr)::new_env) mem
-                                  | InN(n) -> InN(n)
-                                  | _ -> failwith "error in app"
+  |ASTCallAdr(exprp) -> (
+    match exprp with 
+    |ASTId(id) -> if is_in_env id env then recup_env id env 
+                    else failwith (id ^ "is not in environement")
+    |_-> failwith "error: adress null"
+    )
+  |ASTPr(e)-> eval_expr e
 (*verifier des valeurs et l'environement *)
 and verify_env_for_call exprs env mem=
   match exprs with
-    ASTExprs(e,es) -> (eval_expr_for_call e env mem)::(verify_env_for_call es env mem)
-  | ASTExpr(e) -> (eval_expr_for_call e env mem)::[]
+    ASTExprsp(e,es) -> (eval_expr_for_call e env mem)::(verify_env_for_call es env mem)
+  | ASTExprp(e) -> (eval_expr_for_call e env mem)::[]
 
 let rec eval_stat stat env output mem= 
   match stat with
@@ -205,7 +191,7 @@ and eval_def def env mem=
 and eval_cmds cs env output mem = 
   match cs with
    ASTStat(stat) -> eval_stat stat env output mem
-  |ASTDef(def ,cmds) -> (let (env', mem') = eval_def def env mem in
+   |ASTDef(def ,cmds) -> (let (env', mem') = eval_def def env mem in
                             eval_cmds cmds env' output mem')
   | ASTStats(s, cmds) -> (let (mem', output') = eval_stat s env output mem in
                             eval_cmds cmds env output' mem')

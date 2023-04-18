@@ -35,11 +35,10 @@ rule token = parse
   | "if"             { IF }
   | "and"             { AND }
   | "or"              { OR }
-  | "not"            { NOT } 
-    (*Constantes numeriques*)
-  | ['0'-'9']+('.'['0'-'9'])? as lxm { NUM(int_of_string lxm) }
-    (*Identificateurs*)
-  | ['a'-'z']['a'-'z''A'-'Z''0'-'9']* as lxm { IDENT(lxm) }
+  | "not"            { NOT }
+  (* aps1a *)
+  | "var"            { VALEUR }
+  | "adr"            { ADR } 
     (*symboles primitifs*)
   | "true"           { TRUE }
   | "false"           { FALSE }
@@ -50,7 +49,10 @@ rule token = parse
   | "CALL"            { CALL }
   | "SET"             { SET }
   | "IF"              { IF2 }
-  
+   (*Constantes numeriques*)
+  | ['0'-'9']+('.'['0'-'9'])? as lxm { NUM(int_of_string lxm) }
+    (*Identificateurs*)
+  | ['a'-'z']['a'-'z''A'-'Z''0'-'9']* as lxm { IDENT(lxm) }
   
  
   | eof              { raise Eof }

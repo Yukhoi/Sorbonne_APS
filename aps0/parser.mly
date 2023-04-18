@@ -15,11 +15,11 @@ open Ast
   
 %token <int> NUM
 %token <string> IDENT
+%token <bool> BOOLEAN 
+%token TRUE FALSE
 %token LPAR RPAR 
 %token LBRA RBRA
 %token COMA COLON SEMICOLON STAR ARROW
-%token TRUE FALSE
-%token ADD MINUS TIMES DIV
 %token INT BOOL
 %token OR AND NOT
 %token CONST
@@ -91,6 +91,8 @@ args:
 
 expr:
   NUM                         { ASTNum($1) }
+| TRUE                        { ASTBool(true) }
+| FALSE                       { ASTBool(false) }
 | IDENT                       { ASTId($1) }
 | LPAR expr exprs RPAR        { ASTApp($2, $3) }
 | LPAR IF expr expr expr RPAR { ASTIf($3, $4, $5) }

@@ -1,0 +1,3 @@
+[ 
+    VAR x int; SET x 5; ECHO x; PROC p [a: int] [SET a 8]; CALL p x
+]

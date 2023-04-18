@@ -50,6 +50,14 @@ type args =
     ASTArg2 of arg
   | ASTArgs of arg * args
 
+(* aps1a *)
+and argp = 
+    ASTArgP1 of string * typ 
+  | ArguPA of string * typ
+and argsp = 
+    ASTArgP2 of argp 
+  | ASTArgsP of argp * argsp
+
 type expr =
     ASTNum of int
   | ASTId of string
@@ -67,14 +75,23 @@ and exprs =
   ASTExpr of expr
 | ASTExprs of expr * exprs 
 
+(* aps1a*)
+and exprp = 
+    ASTPr of expr
+  | ASTCallAdr of expr
+and exprsp =
+    ASTExprp of exprp
+  | ASTExprsp of exprp * exprsp
+
 type def =
   ASTConst of string * typ * expr
 | ASTFunc of string * typ * args * expr
 | ASTFuncRec of string * typ * args * expr
 (* aps1 *)
 | ASTVar of string * typ
-| ASTProc of string * args * block
-| ASTProcRec of string * args * block
+(* aps1a *)
+| ASTProc of string * argsp * block
+| ASTProcRec of string * argsp * block
 
 and stat =
   ASTEcho of expr
@@ -82,7 +99,8 @@ and stat =
 | ASTSet of string * expr
 | ASTIF of expr * block * block
 | ASTWhile expr * block
-| ASTCall string * exprs
+(* aps1a *)
+| ASTCall string * exprsp
       
 and cmds =
   ASTStat of stat

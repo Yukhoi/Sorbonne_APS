@@ -53,6 +53,8 @@ type expr =
     ASTNum of int
   | ASTId of string
   | ASTBool of bool
+  (* | ASTTrue of bool
+  | ASTFalse of bool *)
   | ASTApp of expr * exprs
   | ASTIf of expr * expr * expr
   | ASTAnd of opAnd * expr * expr

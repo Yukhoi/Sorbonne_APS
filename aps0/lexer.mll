@@ -35,8 +35,9 @@ rule token = parse
   | "if"             { IF }
   | "and"             { AND }
   | "or"              { OR }
-  | "not"            { NOT } 
-  
+     (*symboles primitifs*)
+  | "true"           { TRUE }
+  | "false"           { FALSE }
     (*Constantes numeriques*)
   | ['0'-'9']+('.'['0'-'9'])? as lxm { NUM(int_of_string lxm) }
     (*Identificateurs*)

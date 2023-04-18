@@ -82,11 +82,13 @@ let call e vs =
 
 let is_operateur e =
   match e with 
-  |ASTId("add" | "sub" | "mult" | "div" | "eq" | "lt") -> true
+  |ASTId("add" | "sub" | "mult" | "div" | "eq" | "lt" | "not") -> true
   |_ -> false
 
 let rec eval_expr expr env = 
   match expr with 
+  (* |ASTTrue(_) -> InN(1)
+  |ASTFalse(_) -> InN(0) *)
   |ASTBool(e) -> if (e) then InN(1) else InN(0)
   |ASTNum (e) -> InN(e)
   |ASTId(id) -> if is_in_env id env then recup_env id env else failwith (id ^ " is not in environement")

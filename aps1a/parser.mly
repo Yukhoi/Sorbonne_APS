@@ -43,7 +43,9 @@ open Ast
 (* aps1 *)
 %type <Ast.block> block
 %type <Ast.blocks> blocks
-
+/* APS1a */
+%type <Ast.argp> argp
+%type <Ast.argsp> argsp
 
 
 
@@ -75,7 +77,8 @@ stat:
 | SET IDENT expr        { ASTSet($2, $3) } 
 | IF2 expr block block  { ASTIF($2, $3, $4) }
 | WHILE expr block      { ASTWhile($2, $3) }
-| CALL IDENT expr       { ASTCall($2, $3) }
+(* aps1a *)
+| CALL IDENT exprsp       { ASTCall($2, $3) }
 ;
 
 def:
@@ -101,7 +104,7 @@ typ:
 ;
 
 typs:
-  typ                  {ASTType($1)}
+  typ                  { ASTType($1) }
 | typ STAR typs       {ASTTypes($1,$3)}
 ;
 
@@ -110,10 +113,20 @@ arg:
 ;
 
 args:
-  arg                   {ASTArg2($1)}
-| arg COMA args         {ASTArgs($1,$3)}
+  arg                   { ASTArg2($1) }
+| arg COMA args         { ASTArgs($1,$3) }
 ;
 
+(* aps1a *)
+argp:
+  IDENT COLON typ           { ASTArgP1($1, $3) }
+| VALEUR IDENT COLON typ    { ArguPA($2, $4) }
+;
+
+  argsp:
+  argp                      { ASTArgP2($1) }
+| argp COMA argsp           { ASTArgsP($1, $3)}
+;
 
 expr:
   NUM                         { ASTNum($1) }
@@ -121,14 +134,25 @@ expr:
 | LPAR expr exprs RPAR        { ASTApp($2, $3) }
 | LPAR IF expr expr expr RPAR { ASTIf($3, $4, $5) }
 | LPAR AND expr expr RPAR     { ASTAnd(Ast.And, $3, $4) }
-| LPAR OR expr expr RPAR      {ASTOr(Ast.Or,$3, $4)}
+| LPAR OR expr expr RPAR      { ASTOr(Ast.Or,$3, $4) }
 | LPAR NOT expr RPAR          { ASTNot(Ast.Not,$3) }
-| LBRA args RBRA expr         {ASTExprArgs($2,$4)}
+| LBRA args RBRA expr         { ASTExprArgs($2,$4) }
 ;
 
 exprs :
-  expr       {ASTExpr ($1) }
-| expr exprs {ASTExprs($1,$2)}
+  expr       { ASTExpr ($1) }
+| expr exprs { ASTExprs($1,$2) }
+;
+
+(* aps1a *)
+exprp:
+  expr { ASTPr($1) }
+| LPAR ADR expr RPAR { ASTCallAdr($3) }
+;
+
+exprsp:
+  exprp { ASTExprp($1)}
+| exprp exprsp { ASTExprsp($1, $2) }
 ;
 
 
