@@ -1,4 +1,4 @@
 [ 
- CONST a bool true;
+ CONST a bool (eq 0 1);
  ECHO a]
 

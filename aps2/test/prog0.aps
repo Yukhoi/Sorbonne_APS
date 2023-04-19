@@ -1,6 +1,7 @@
 [
-  CONST x int 6;
   CONST xs (vec int) (alloc 2);
-  ECHO x
- 
+  SET (nth xs 0) 1;
+  SET (nth xs 1) 2;
+  ECHO (nth xs 0); 
+  ECHO (nth xs 1)
 ]
