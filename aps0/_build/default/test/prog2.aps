@@ -1,3 +1,0 @@
-[ 
-    CONST x INT 5; ECHO ( add x 45 )
-]

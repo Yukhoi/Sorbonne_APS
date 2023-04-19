@@ -1,1 +1,0 @@
-[ CONST x INT 8; CONST y INT 9; ECHO (add (mult 42 x) (sub (div y 2) 42)) ]

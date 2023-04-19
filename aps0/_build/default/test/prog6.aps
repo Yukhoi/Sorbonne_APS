@@ -1,4 +1,0 @@
-[   CONST x INT 6;
-    FUN f INT [a:INT] (add a 5);
-    ECHO (f x) 
-]
