@@ -19,6 +19,7 @@ let rec string_of_type t =
     |ASTTypeFunc(ts, t ) -> 
       "([" ^ string_of_types ts ^ "]," ^ string_of_type t ^ ")"
       (* aps 2 *)
+    (* | TypeVec  _ -> assert false *)
     | TypeVec  t -> "vec("^string_of_type t^")"
 
 and string_of_types ts = 
@@ -60,6 +61,7 @@ and string_of_exprs env es =
           
 let rec string_of_def env d = 
   match d with 
+    (* ASTConst _ -> assert false *)
     ASTConst (str ,t, e) -> 
       "const(" ^ str ^ "," ^ string_of_type t ^ "," ^ string_of_expr (List.append env ["("^str^","^ string_of_type t ^")"]) e ^ ")"
     | ASTVar (str, t) ->
@@ -94,6 +96,7 @@ and string_of_cmds env cs =
   match cs with 
     ASTStat s -> 
       ( "stat(" ^ string_of_stat env s ^ ")")
+    (* |ASTDef _ -> assert false *)
     |ASTDef (d,c) -> 
       ("def(" ^ string_of_def env d ^ ")," ^ string_of_cmds env c)
     |ASTStats (s,c) ->
@@ -121,10 +124,11 @@ let rec print_env e =
               print_env l;;
 
 let string_of_prog p = 
-  (* let env = [] in  *)
+  let env = [] in   
   match p with 
-  | ASTProg(_) -> assert false
-    (* "typeProg(prog([" ^ string_of_cmds env p ^ "]), void)"; *)
+  (* | ASTProg(_) -> assert false *)
+  | ASTProg(p) ->
+    "typeProg(prog([" ^ string_of_cmds env p ^ "]), void)";
 
 ;;
 

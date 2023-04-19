@@ -9,31 +9,35 @@
     |InP of block * string list * env list 
     |InPR of block * string * string list * env list 
     |None
+    |Any
      (* aps 2 *)
     |InB of int * int
-    and env = string * value
-    and env = string * value
-  
-  let alloc_block mem n = 
-    let adr = newAddress mem  in
-      match adr with
-        Address a -> (adr, mem@[(a,Any)])
-        |_ -> failwith "Error in allocation"
 
-  and newAddress mem = (
+    and env = string * value
+    
+  let newAddress mem = (
     let rec aux m a =
       match m with
-        [] -> Address (a+1)
+        [] -> InA (a+1)
         |(k,_)::t when k > a -> aux t k
         |(k,_)::t  -> aux t a
     in aux mem 0)
+  
+  and alloc_block mem n = 
+    let adr = newAddress mem  in
+      match adr with
+        InA a -> (adr, mem@[(a,Any)])
+        |_ -> failwith "Error in allocation"
+  
+ 
 
     
   (*recuperer id dans le pair(id,type)*)
-  let recup_iden arg =
+  and recup_iden arg =
     match arg with 
       ASTArg1(id, _) -> id
-  
+;;
+
   (*recuperer chaque argument dans son list*)
   let rec recup_args args =
     match args with
@@ -94,21 +98,59 @@
     match e with 
     |ASTId("add" | "sub" | "mult" | "div" | "eq" | "lt"|"alloc"|"len"|"nth"|"vset"| "not") -> true
     |_ -> false
-            
-  let eval_opperateur op vs = 
+
+  let rec eval_expr expr env mem = 
+    match expr with 
+    |ASTBool(e) -> if (e) then (InN(1),mem) else (InN(0),mem)
+    |ASTNum (e) -> (InN(e),mem)
+    (* aps 2 *)
+    |ASTId(id) -> (match recup_env id env with
+                    InA(a) -> (recup_mem a mem ,mem)
+                    | v -> (v,mem))
+    |ASTAnd(_,e1,e2) -> if eval_expr e1 env mem = (InN(1),mem) then eval_expr e2 env mem else (InN(0),mem)
+    |ASTOr(_,e1,e2) -> if eval_expr e1 env mem = (InN(0),mem) then eval_expr e2 env mem else (InN(1),mem)
+    |ASTIf(con,e1,e2) -> if eval_expr con env mem = (InN(1),mem) then eval_expr e1 env mem else eval_expr e2 env mem
+    |ASTExprArgs(args,e) -> (InF(e, recup_args(args) ,env),mem)
+    |ASTApp(expr, exprs) -> let vs = (verify_env exprs env mem) in
+                              if is_operateur expr then call expr vs else 
+                                let (c , mem') = (eval_expr expr env mem) in
+                                match c with 
+                                    |InF(e', clo, environement) ->
+                                      (*construire un nouveau environement*)
+                                      let new_env = (assoc_iden_val clo vs) @ environement in
+                                        eval_expr e' new_env mem
+                                    |InFR(e', x , clo, environement) as fr ->
+                                          (*construire un nouveau environement*)
+                                          let new_env = (assoc_iden_val clo vs) @ environement in
+                                            eval_expr e' ((x,fr)::new_env) mem
+                                    (* | InN(n) -> InN(n) *)
+                                    | _ -> failwith "error in app"
+  (*verifier des valeurs et l'environement *)
+  and verify_env exprs env mem=
+    match exprs with
+      ASTExprs(e,es) -> let (c , mem') = (eval_expr expr env mem) in
+        c ::(verify_env es env mem)
+    | ASTExpr(e) -> let (c , mem') = (eval_expr expr env mem)
+        c::[]        
+
+  and eval_opperateur op vs env mem = 
     match vs with
-    |[v1 ; v2] ->
+    |[val1 ; val2] ->
       (match op with
-          "eq" -> (if (get_int(v1) = get_int(v2)) then InN(1) else InN(0))
-        | "lt" -> (if (get_int(v1) < get_int(v2)) then InN(1) else InN(0))
-        | "add" -> InN(get_int(v1) + get_int(v2))
-        | "sub" -> InN(get_int(v1) - get_int(v2))
-        | "mult" -> InN(get_int(v1) * get_int(v2))
-        | "div" -> InN(get_int(v1) / get_int(v2))
-        | "nth" -> let v1' = eval_expr v1 env mem in
-                    let v2' = eval_expr v2 env mem' in
-                    (match v1', v2' with
-                    ((InB(a , n),mem') ,(InN(i),mem'') )->(recup_mem (a+i) mem'', mem'')
+          "eq" -> let (val1',mem') = eval_expr val1 env mem in let (val2',mem') = eval_expr val2 env mem' in
+                  (match (get_int val1') == (get_int val2') with
+                    true -> (InN(1),mem')
+                    |false -> (InN(0),mem')
+                  )
+        | "lt" -> (if (get_int(val1) < get_int(val2)) then InN(1) else InN(0))
+        | "add" -> InN(get_int(val1) + get_int(val2))
+        | "sub" -> InN(get_int(val1) - get_int(val2))
+        | "mult" -> InN(get_int(val1) * get_int(val2))
+        | "div" -> InN(get_int(val1) / get_int(val2))
+        | "nth" -> let val1' = eval_expr val1 env mem in
+                    let val2' = eval_expr val2 env mem' in
+                    (match val1', val2' with
+                    ((InB(a , n)) ,(InN(i)) )->(recup_mem (a+i) mem', mem'')
                   |_ -> failwith "Error in NTH, not in memory")
         |_ -> assert false)
     | [v] -> 
@@ -122,63 +164,32 @@
                         InB((a ,n),mem') -> (InN(n),mem')
                         |_ -> failwith "Error in LEN")
         |_-> assert false)
-    |[v1 ; v2 ; v3]->
+    |[val1 ; val2 ; v3]->
       (
         match op with
-          "vset" -> let(v1', mem') = eval_expr v1 env mem     in 
-                    let(v2',mem'')  = eval_expr v2 env mem in
+          "vset" -> let(val1', mem') = eval_expr val1 env mem     in 
+                    let(val2',mem'')  = eval_expr val2 env mem in
                     let(v3',mem''')  = eval_expr v3 env mem in
-                    ( match v1',v2',v3' with
+                    ( match val1',val2',v3' with
                     (InB(a , n), InN(i) , v) -> let mem3 = (set_mem (a+i) v mem''' ) in ((InB(a , n)),mem3)
                     |_ -> failwith "Error in VSET ")
       )
     |_ -> assert false
   
-  let call e vs = 
+  and call e vs = 
     match e with
-    |ASTId(op) -> eval_opperateur op vs
+    ASTId(op) -> eval_opperateur op vs
     |_ -> assert false
   
-  
+   
   (* string  *)
-  let is_op e = 
-    match e with
-    ("add" | "sub" | "mult" | "div" | "eq" | "lt"| "not") -> true
-    |_ -> false
-  
-  let rec eval_expr expr env mem = 
-    match expr with 
-    |ASTBool(e) -> if (e) then InN(1) else InN(0)
-    |ASTNum (e) -> InN(e)
-    (* aps 2 *)
-    |ASTId(id) -> (match recup_env id env with
-                    InA(a) -> (recup_mem a mem ,mem)
-                    | v -> (v,mem))
-    |ASTAnd(_,e1,e2) -> if eval_expr e1 env mem = InN(1) then eval_expr e2 env mem else InN(0)
-    |ASTOr(_,e1,e2) -> if eval_expr e1 env mem = InN(0) then eval_expr e2 env mem else InN(1)
-    |ASTIf(con,e1,e2) -> if eval_expr con env mem = InN(1) then eval_expr e1 env mem else eval_expr e2 env mem
-    |ASTExprArgs(args,e) -> InF(e, recup_args(args) ,env)
-    |ASTApp(expr, exprs) -> let vs = (verify_env exprs env mem) in
-                              if is_operateur expr then call expr vs else 
-                                match (eval_expr expr env mem) with 
-                                    |InF(e', clo, environement) ->
-                                      (*construire un nouveau environement*)
-                                      let new_env = (assoc_iden_val clo vs) @ environement in
-                                        eval_expr e' new_env mem
-                                    |InFR(e', x , clo, environement) as fr ->
-                                          (*construire un nouveau environement*)
-                                          let new_env = (assoc_iden_val clo vs) @ environement in
-                                            eval_expr e' ((x,fr)::new_env) mem
-                                    | InN(n) -> InN(n)
-                                    | _ -> failwith "error in app"
-  (*verifier des valeurs et l'environement *)
-  and verify_env exprs env mem=
-    match exprs with
-      ASTExprs(e,es) -> (eval_expr e env mem)::(verify_env es env mem)
-    | ASTExpr(e) -> (eval_expr e env mem)::[]
-  
-  
-  let rec eval_expr_for_call expr env mem = 
+  and is_op e = 
+      match e with
+        ("add" | "sub" | "mult" | "div" | "eq" | "lt"| "not") -> true
+        |_ -> false
+    
+    
+  and eval_expr_for_call expr env mem = 
     match expr with 
     |ASTBool(e) -> if (e) then InN(1) else InN(0)
     |ASTNum (e) -> InN(e)
@@ -207,7 +218,8 @@
       ASTExprs(e,es) -> (eval_expr_for_call e env mem)::(verify_env_for_call es env mem)
     | ASTExpr(e) -> (eval_expr_for_call e env mem)::[]
   
-  let rec eval_stat stat env output mem= 
+                                  
+  and eval_stat stat env output mem= 
     match stat with
       |ASTEcho(e) -> if is_num (eval_expr e env mem) then (mem, (eval_expr e env mem:: output) ) else failwith "fail in echo"
       (* aps 2 *)
@@ -277,19 +289,18 @@
   and eval_block cs env output mem =
     match cs with
     |ASTBlock(cs) -> eval_cmds cs env output mem
-  
-  let print_val v = 
+                                  
+  and print_val v = 
     match v with
-     InN(n) -> Printf.printf "%d \n "n
-     | _ -> failwith "not a printable value"
-  
-  
-  
-  let rec eval_prog prog = 
+    | InN(n) -> Printf.printf "%d \n "n
+    | _ -> failwith "not a printable value"
+
+  and print_output output =
+    List.iter (function x -> print_val x) (List.rev output) 
+
+  and  eval_prog prog = 
     match prog with
     |ASTProg(cmds) -> let (_, new_output) = eval_cmds cmds [] [] [] in
-                        print_output new_output
-    and print_output output =
-      List.iter (function x -> print_val x) (List.rev output) 
+                      print_output new_output
+
       
-  

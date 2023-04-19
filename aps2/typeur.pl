@@ -93,7 +93,7 @@ typeStat(G, call(X, ARGS), void) :-
     inEnv(X, (TARGS,void)),
     get_typeArgs(ARGS,RES),
     checkArgs(G, ARGS, RES).
-# APS 2 SET 
+/*APS 2 SET */
 typeStat(G , set(L) , E) :- 
     typeExpr(G , L , T) ,
     typeExpr(G , E, T).
@@ -105,7 +105,7 @@ typeExpr(_,false , bool).
 /*num*/
 typeExpr(G ,N, int) :- integer(N).
 /*id*/
-typeExpr(G, id(X), T) :- inEnv(G, X, T)
+typeExpr(G, id(X), T) :- inEnv(G, X, T).
 /*if*/
 typeExpr(G,if(CON, E1, E2), T) :- 
     typeExpr(G, CON, bool),
@@ -134,7 +134,7 @@ typeExpr(G,app(app(X,Y),ARGS),TR) :-
 	get_type(ARGS,LT),
 	typeExpr(G,app(X,Y),(LT,TR)).
 
-#  Aps2 
+/*Aps2 */
 typeExpr(G , alloc(E) ,vec(T)):- 
     typeExpr(G,E,int).
 
