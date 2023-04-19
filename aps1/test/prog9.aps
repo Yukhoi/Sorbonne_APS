@@ -1,3 +1,3 @@
-[
-    ECHO (not false)
-]
+[ 
+ CONST a bool (eq 1 2);
+ ECHO a]
