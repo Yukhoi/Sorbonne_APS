@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 [
     CONST x BOOL false;
     ECHO (not x)
 ]
+=======
+[ 
+ CONST a bool (eq 1 2);
+ ECHO a]
+>>>>>>> 2f71b659e004d1debe4410827f4e276fab1d79a4

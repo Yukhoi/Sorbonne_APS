@@ -1,0 +1,4 @@
+[   CONST x INT 3; 
+    FUN REC f INT [x:INT] 0; 
+    ECHO (f x) 
+]

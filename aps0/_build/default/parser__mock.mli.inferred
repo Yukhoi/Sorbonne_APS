@@ -1,0 +1,44 @@
+type token =
+    TRUE
+  | TIMES
+  | STAR
+  | SEMICOLON
+  | RPAR
+  | REC
+  | RBRA
+  | OR
+  | NUM of int
+  | NOT
+  | MINUS
+  | LPAR
+  | LESS
+  | LBRA
+  | INT
+  | IF
+  | IDENT of string
+  | FUNC
+  | FUN
+  | FALSE
+  | EQUAL
+  | ECHO
+  | DIV
+  | CONST
+  | COMA
+  | COLON
+  | BOOL
+  | ARROW
+  | AND
+  | ADD
+val menhir_begin_marker : int
+val xv_typs : Ast.typs
+val xv_typeBoolInt : Ast.typeBoolInt
+val xv_typ : Ast.typ
+val xv_stat : Ast.stat
+val xv_prog : Ast.cmds
+val xv_exprs : Ast.exprs
+val xv_expr : Ast.expr
+val xv_def : Ast.def
+val xv_cmds : Ast.cmds
+val xv_args : Ast.args
+val xv_arg : Ast.arg
+val menhir_end_marker : int
