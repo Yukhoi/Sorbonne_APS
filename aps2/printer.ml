@@ -121,10 +121,10 @@ let rec print_env e =
               print_env l;;
 
 let string_of_prog p = 
-  let env = [] in 
+  (* let env = [] in  *)
   match p with 
-  | ASTProg(p) ->
-    "typeProg(prog([" ^ string_of_cmds env p ^ "]), void)";
+  | ASTProg(_) -> assert false
+    (* "typeProg(prog([" ^ string_of_cmds env p ^ "]), void)"; *)
 
 ;;
 

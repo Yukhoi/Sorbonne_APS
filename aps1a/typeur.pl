@@ -19,8 +19,11 @@ checkArgsCall(G,[ARG|ARGS],[ARGTYPE|ARGSTYPE]) :-
 	typeExprp(G,ARG,ARGTYPE),
 	checkArgsCall(G,ARGS,ARGSTYPE).
 
+
+inEnv(G, X, TARGS) :- member((_,_,ref(ref(_))),G), false.
 inEnv([(X,TARGS,T)|G], X, TARGS).
-inEnv([_|G], X, TARGS) :- inEnv(G, X, TARGS).
+inEnv([_|G], X, TARGS) :- 
+    inEnv(G, X, TARGS).
 
 /*env initial*/
 g0([(id(add),[int,int],int),
@@ -106,11 +109,18 @@ typeStat(G, call(X, ARGS), void) :-
 	checkArgsCall(G, ARGS, ARGSTYPE).
 /* (aps1a) set*/
 typeStat(G,set(X, E),void) :- 
+    get_typeArgs([id(X)],T),
+    T\=ref(_),
+    fail.
+typeStat(G,set(X, E),void) :- 
     typeExpr(G, X, ref(T)),
     typeExpr(G, E, T).
 
 
+
+
 /*expr*/
+typeExpr(_,_,ref(ref(_))) :-  fail.
 typeExpr(_,true , bool).
 typeExpr(_,false , bool).
 /*num*/
@@ -118,7 +128,6 @@ typeExpr(G ,N, int) :- integer(N).
 /*id normal*/
 typeExpr([(id(X),[],T)], id(X), T).
 typeExpr([(id(X),[],T)|_], id(X), T).
-typeExpr([_|G],id(X),T) :- typeExpr(G,id(X),T).
 /*(aps1a) id ref*/
 typeExpr([(id(X),[],ref(T))], id(X), T).
 typeExpr([(id(X),[],ref(T))|_], id(X), T).

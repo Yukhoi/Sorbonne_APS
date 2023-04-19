@@ -1,0 +1,6 @@
+[
+    CONST x int 3;
+    PROC p [a: int] [SET a 8]; 
+    CALL p x;
+    ECHO x
+]

@@ -1,5 +1,6 @@
 [
+  CONST x int 6;
   CONST xs (vec int) (alloc 2);
- 
+  ECHO x
  
 ]

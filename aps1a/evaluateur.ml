@@ -17,11 +17,21 @@ let recup_iden arg =
   match arg with 
     ASTArg1(id, _) -> id
 
+let recup_iden_for_proc arg =
+  match arg with
+    ASTArgP1(id, _)-> id
+  | ArguPA(id,_) -> id
+
 (*recuperer chaque argument dans son list*)
 let rec recup_args args =
   match args with
-  |ASTArgs(arg,args) -> [recup_iden arg] @ recup_args args
-  |ASTArg2(arg) -> [recup_iden arg] 
+    |ASTArgs(arg,args) -> [recup_iden arg] @ recup_args args
+    |ASTArg2(arg) -> [recup_iden arg] 
+
+let rec recup_args_for_proc args =
+  match args with
+    |ASTArgP2(argp) -> [recup_iden_for_proc argp]
+    |ASTArgsP(arg,args) -> [recup_iden_for_proc arg] @ recup_args_for_proc args
   
 
 (*si la valeur est dans l'environement*)
