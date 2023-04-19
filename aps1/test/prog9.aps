@@ -1,3 +1,4 @@
 [
-    ECHO (not false)
+    CONST x BOOL false;
+    ECHO (not x)
 ]

@@ -1,0 +1,4 @@
+[
+    FUN REC fib INT [x:INT] (if (eq x 0) 0 (if (eq x 1) 1 (add (fib (sub x 1)) (fib (sub x 2)))));
+    ECHO (fib 6)
+]
