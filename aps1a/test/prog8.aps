@@ -1,5 +1,0 @@
-[
-    CONST x int 8;
-    SET x 7;
-    ECHO x
-]
