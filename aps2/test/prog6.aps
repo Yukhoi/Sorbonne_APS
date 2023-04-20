@@ -1,3 +1,9 @@
 [ 
-    VAR x int; SET x 5; WHILE (lt 0 x) [ECHO x; SET x (sub x 1)]
+   VAR x int;
+  VAR y int;
+  SET y 1;
+  IF (eq x 42)
+    [ ECHO x ]
+    [ SET y 42 ];
+  ECHO y
 ]

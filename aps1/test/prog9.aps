@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-[
-    CONST x BOOL false;
-    ECHO (not x)
-]
-=======
 [ 
- CONST a bool (eq 1 2);
- ECHO a]
->>>>>>> 2f71b659e004d1debe4410827f4e276fab1d79a4
+    VAR x int; SET x 5; ECHO x; PROC p [a: int] [SET a 8]; CALL p x
+]
