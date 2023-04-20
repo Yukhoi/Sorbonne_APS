@@ -27,7 +27,7 @@ let () =
   try
     let output = Parser.prog Lexer.token buf in
       close_in f;
-    (* Evaluateur.eval_prog output; *)
+     Evaluateur.eval_prog output; 
     let res = Printer.string_of_prog output in
     print_string res;
     print_string ".\n";

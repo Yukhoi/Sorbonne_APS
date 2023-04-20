@@ -192,8 +192,8 @@ and eval_def def env mem=
   match def with
       ASTConst(id,_,e) -> ((id , eval_expr e env mem) :: env,mem) 
     | ASTVar(id, _) -> ((id , InA(List.length mem)) :: env, (mem @ [(List.length mem), InN(-1)])) (*a verifier*)
-    | ASTProc(id, args, bk) -> ((id, InP(bk ,recup_args args ,env)) :: env, mem)
-    | ASTProcRec(id, args, bk) -> ((id , InPR(bk , id, recup_args args , env)) :: env, mem)
+    | ASTProc(id, args, bk) -> ((id, InP(bk ,recup_args_for_proc args ,env)) :: env, mem)
+    | ASTProcRec(id, args, bk) -> ((id , InPR(bk , id, recup_args_for_proc args , env)) :: env, mem)
     | ASTFunc (id ,_,args, e) ->((id , InF(e ,recup_args args ,env )) :: env, mem)
     | ASTFuncRec (id ,_ ,args, e ) -> ((id , InFR(e , id, recup_args args , env)) ::env, mem)
 
